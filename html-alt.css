@@ -1,0 +1,29 @@
+.splash{
+	background-color: #0cf;
+	height: 100vh;
+	position: relative;
+	top: 0;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	overflow: hidden;
+}
+.hamburger-wrapper{
+	height: 40px;
+	width: 40px;
+	position: absolute;
+	z-index: 100000;
+	top: 12px;
+	right: 15px;
+	background-color: #000;	
+	border-radius: 50%;
+}
+.hamburger span{
+	display: block;
+	position: relative;
+	color: #FFF;
+	width: 32px;
+	height 3px;
+	top: 12px;
+	z-index: 100000;
+}
