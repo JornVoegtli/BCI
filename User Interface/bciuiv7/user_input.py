@@ -27,7 +27,7 @@ class TextWidget(object):
         )
         font = self.document.get_font()
         self.layout = pyglet.text.layout.IncrementalTextLayout(
-            self.document, width, height, multiline=False, batch=batch)
+            self.document, width, height, multiline=True, batch=batch)
         self.caret = pyglet.text.caret.Caret(self.layout)
 
         self.layout.x = x

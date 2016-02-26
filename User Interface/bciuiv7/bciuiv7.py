@@ -39,8 +39,8 @@ class MyOVBox(OVBox):
             x=0, y=0,
             anchor_x='left', anchor_y='bottom')
         self.batch = pyglet.graphics.Batch()
-        self.widget = user_input.TextWidget('', 0, int(self.height/2), int(self.width),int(self.height/2), self.batch)
-        text = "hi sdf sdf sd fsd fsd f sdf sd fds f dsf sdf ds fds fds f dsf ds fds fsd f sd s dfs df sdf ds fsd f ds fds fs dfdsf ds f sdf dsf ds fsd fsd f sdf sd fsddf ds"
+        self.widget = user_input.TextWidget('', 0, int(7*self.height/12), int(self.width),int(5*self.height/12), self.batch)
+        text = "This is a test line to test if the test moves to the next line. Test test test test test test test test test. The rabbit jumps over the moon to eat the pie that's in the stove but the stove is no where to be found because I got nothing to type and hats and peanut butter is not what i want to say but i dont know what im typing help me please"
         self.widget.caret.on_text(text)
 
         self.win.dispatch_events()
@@ -66,26 +66,29 @@ class MyOVBox(OVBox):
                 #    print target_stim.identifier
                 self.target[0] = random.randint(0,5)
                 self.target[1] = random.randint(0,5)
-        #word_display.displayUpdate(self.target,self.keepWriting,self.textstring, self.textmode, self.label
         if self.win.has_exit:
             self.win.close()
             sys.exit()
 
         else:
-            self.label2 = random.randint(0,11)
+            self.label2 = random.randint(0,12)
             self.target0 = random.randint(0,5)
-            self.target1 = random.randint(0,5)
+            self.target1 = random.randint(0,6)
             self.win.dispatch_events()
-            if(self.keys[key.A]):
-                self.win.close()
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
-            primitives.drawRect(0,self.height/2,self.width,self.height/2,4/51,4/51,4/51,255)
+            #draw keyboard surface
+            #primitives.drawRect(0,self.height/2,self.width,self.height/2,4/51,4/51,4/51,255)
+            #draw text
             self.batch.draw() 
+            #highlight vertical
             if self.label2 < 6:
-                primitives.drawRect(self.label2*self.width/6,0,self.width/6,self.height/2,1,1,0,1)
-            elif self.label2 < 12:
-                primitives.drawRect(0,self.label2%6*self.height/12,self.width,self.height/12,1,1,0,1)
+                primitives.drawRect(self.label2*self.width/6,0,self.width/6,7*self.height/12,1,1,0,1)
+            #highlight horizontal
+            elif self.label2 < 13:
+                primitives.drawRect(0,self.label2%7*self.height/12,self.width,self.height/12,1,1,0,1)
+            #highlight target    
             primitives.drawRect(self.target0*self.width/6,self.target1*self.height/12,self.width/6,self.height/12,0,1,0,1)
+            #draw keyboard
             self.words.draw()
             self.win.flip()
         return
