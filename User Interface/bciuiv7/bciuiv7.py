@@ -47,19 +47,19 @@ class MyOVBox(OVBox):
         user32 = ctypes.windll.user32
         self.width = user32.GetSystemMetrics(0)
         self.height = user32.GetSystemMetrics(1)
-        self.words6 = pyglet.text.Label("A              B              C             D              E              \u2190",
+        self.words6 = pyglet.text.Label("A               B               C              D               E               \u2190",
             font_name='monospace',
             font_size=36,
             color=(255,255,255,255),
             x=0, y=5*self.height/12,
             anchor_x='left', anchor_y='bottom')
-        self.words5 = pyglet.text.Label("F              G              H             I              J              ENTER",
+        self.words5 = pyglet.text.Label("F               G               H              I               J               ENTER",
             font_name='monospace',
             font_size=36,
             color=(255,255,255,255),
             x=0, y=4*self.height/12,
             anchor_x='left', anchor_y='bottom')
-        self.words4 = pyglet.text.Label("K              L              M             N              O              abc",
+        self.words4 = pyglet.text.Label("K               L               M              N               O               abc",
             font_name='monospace',
             font_size=36,
             color=(255,255,255,255),
