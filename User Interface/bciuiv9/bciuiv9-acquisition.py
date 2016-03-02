@@ -66,7 +66,7 @@ class MyOVBox(OVBox):
         # Called once when starting the scenario
         self.loopCounter = 0
         self.target = [0,0]
-
+        self.hashTable = {12:5,11:4,10:3,9:2,8:1,7:0,6:6,5:7,4:8,3:9,2:10,11:1}
         # Read files into lists for flashes and targets, and convert strings to ints
         with open('flash_stims.txt') as f:
             self.flashes = f.read().splitlines()
@@ -145,12 +145,13 @@ class MyOVBox(OVBox):
         if(isDrawTarget):
             primitives.drawRect(targetCol*width/6, (5-targetRow)*height/12, targetSize[0], targetSize[1], targetColour[0],targetColour[1],targetColour[2],targetColour[3])
         return
-
+    
     def drawFlash(self, rowcol):
+        rowcolMap = self.hashTable[rowcol]
         #text enlargement mode
         if(isEnlargeTextMode):
-            if(rowcol-1 < 6 and isDrawVertFlash):
-                tmp = rowcol
+            if(rowcolMap-1 < 6 and isDrawVertFlash):
+                tmp = rowcolMap
                 for i in range (len(self.words)):
                     if(i == tmp):
                         self.words[i].font_size = keyboardEnlargeFontSize
@@ -159,10 +160,10 @@ class MyOVBox(OVBox):
                     else:
                         self.words[i].font_size = keyboardFontSize
                         self.words[i].color = (keyboardFontColour[0],keyboardFontColour[1],keyboardFontColour[2],keyboardFontColour[3])
-            elif(rowcol < 12 and isDrawHorizFlash):
-                tmp = (rowcol-11)*-6
+            elif(rowcolMap < 12 and isDrawHorizFlash):
+                tmp = (rowcolMap-11)*-6
                 for i in range (len(self.words)):
-                    if(i == tmp and i < (rowcol-11)*-6 + 6):
+                    if(i == tmp and i < (rowcolMap-11)*-6 + 6):
                         self.words[i].font_size = keyboardEnlargeFontSize
                         self.words[i].color = (keyboardEnlargeFontColour[0],keyboardEnlargeFontColour[1],keyboardEnlargeFontColour[2],keyboardEnlargeFontColour[3])
                         tmp = tmp + 1
