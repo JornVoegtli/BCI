@@ -30,8 +30,8 @@ text = [ ['A','B','C','D','E',u"\u2190"],
 user32 = ctypes.windll.user32
 width = user32.GetSystemMetrics(0)
 height = user32.GetSystemMetrics(1)
-width = width*3//4
-height = height*3//4
+width = width
+height = height     
 ############################# CONTROLS #############################
 #P300 flash modes
 isEnlargeTextMode = True
@@ -55,7 +55,7 @@ horizFlashSize = [width,height/12]
 keyboardFontSize = 36
 keyboardFontColour = [230,230,230,255]
 keyboardEnlargeFontSize = 50
-keyboardEnlargeFontColour = [255,255,255,255]
+keyboardEnlargeFontColour = [255,255,0,255]
 ####################################################################
 
 class MyOVBox(OVBox):
@@ -66,7 +66,7 @@ class MyOVBox(OVBox):
         # Called once when starting the scenario
         self.loopCounter = 0
         self.target = [0,0]
-        self.hashTable = {12:5,11:4,10:3,9:2,8:1,7:0,6:6,5:7,4:8,3:9,2:10,11:1}
+        self.hashTable = {12:5,11:4,10:3,9:2,8:1,7:0,6:6,5:7,4:8,3:9,2:10,1:11}
         # Read files into lists for flashes and targets, and convert strings to ints
         with open('flash_stims.txt') as f:
             self.flashes = f.read().splitlines()
@@ -80,7 +80,7 @@ class MyOVBox(OVBox):
 
         # Pyglet
         #create window
-        self.win = window.Window(width, height, fullscreen = False)
+        self.win = window.Window(fullscreen = True)
         
         #colour background and set up openGL rendering
         glClearColor(backgroundColour[0], backgroundColour[1], backgroundColour[2], backgroundColour[3])
@@ -150,7 +150,7 @@ class MyOVBox(OVBox):
         rowcolMap = self.hashTable[rowcol]
         #text enlargement mode
         if(isEnlargeTextMode):
-            if(rowcolMap-1 < 6 and isDrawVertFlash):
+            if(rowcolMap < 6 and isDrawVertFlash):
                 tmp = rowcolMap
                 for i in range (len(self.words)):
                     if(i == tmp):
@@ -188,14 +188,14 @@ class MyOVBox(OVBox):
             # Draw background
             #primitives.drawRect(0,height/2,width,height/2,4/51,4/51,4/51,255)
             # Show a target for the first 10 loops
-            if (self.loopCounter <= 10):
+            if (self.loopCounter <= 30):
                 if (self.loopCounter == 0):
                     self.getNextTarget()
                     self.sendOutput(2, self.target[0])
                     self.sendOutput(2, self.target[1])
                 self.drawTarget(self.target[0]-OVTK_StimulationId_Label_01, self.target[1]-OVTK_StimulationId_Label_07)
             # Flash for the next 50 loops
-            elif (self.loopCounter <= 60):
+            elif (self.loopCounter <= 80):
                 self.getNextFlash()
                 self.drawFlash(self.flashRC-OVTK_StimulationId_Label_00)
                 print(self.flashRC)

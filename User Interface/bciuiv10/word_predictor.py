@@ -25,5 +25,11 @@ def known_edits2(word):
 def known(words): return set(w for w in words if w in NWORDS)
 
 def correct(word):
-    candidates = known([word]) or known(edits1(word)) or known_edits2(word) or [word]
-    return max(candidates, key=NWORDS.get)
+    word1 = word + "a"
+    word2 = word + "e"
+    candidate0 = known([word]) or known(edits1(word)) or known_edits2(word) or [word]
+    candidate1 = known([word1]) or known(edits1(word1)) or known_edits2(word1) or [word]
+    candidate2 = known([word2]) or known(edits1(word2)) or known_edits2(word2) or [word]
+    return [max(candidate0, key=NWORDS.get), 
+            max(candidate1, key=NWORDS.get),
+            max(candidate2, key=NWORDS.get)]

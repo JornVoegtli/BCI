@@ -52,7 +52,7 @@ isDrawTarget = True
 #target parameters
 targetSize = [width/6,height/12]
 #general UI display paramaters
-backgroundColour = [0,0,1,1] #1 corresponds to 255 last value is alpha
+backgroundColour = [0,0,1,1]
 #highlight mode parameters
 targetColour = [0,1,0,1]
 vertFlashColour = [0,1,1,1]
@@ -64,9 +64,9 @@ keyboardFontSize = 36
 keyboardFontColour = [230,230,230,255]
 keyboardEnlargeFontSize = 50
 keyboardEnlargeFontColour = [255,255,0,255]
-#timing
+#target timing
 targetDelay = 30
-#UIsuze
+#UIsize
 UISize = 10
 #UIscaling based on UISize
 widgetPositionY = UISize*height/12
@@ -229,32 +229,32 @@ class MyOVBox(OVBox):
 
 
             if(self.keys[key.A]):
-                self.text_input = "te"
+                self.text_input = "gr"
                 self.current_text = self.current_text + self.text_input
                 self.widget.caret.on_text(self.text_input)
                 self.text_input = ""
-            w0 = word_predictor.correct(self.current_text)
+            corrected_text = word_predictor.correct(self.current_text)
             ypos = keyboardPositionTop - (0)*(keyboardPositionTop/5)
             xpos  = 0*width/6
-            temp0 = pyglet.text.Label(w0, 
+            temp0 = pyglet.text.Label(corrected_text[0], 
                     font_name='monospace',
                     font_size=keyboardFontSize,
                     color=(keyboardFontColour[0],keyboardFontColour[1],keyboardFontColour[2],keyboardFontColour[3]),
                     x=xpos, y=ypos,
                     anchor_x='left', anchor_y='bottom')
-            w1 = word_predictor.correct(self.current_text + "s")
+           
             ypos = keyboardPositionTop - (0)*(keyboardPositionTop/5)
             xpos  = 1*width/6
-            temp1 = pyglet.text.Label(w1, 
+            temp1 = pyglet.text.Label(corrected_text[1], 
                     font_name='monospace',
                     font_size=keyboardFontSize,
                     color=(keyboardFontColour[0],keyboardFontColour[1],keyboardFontColour[2],keyboardFontColour[3]),
                     x=xpos, y=ypos,
                     anchor_x='left', anchor_y='bottom')
-            w2 = word_predictor.correct(self.current_text + "a")
+            
             ypos = keyboardPositionTop - (0)*(keyboardPositionTop/5)
             xpos  = 2*width/6
-            temp2 = pyglet.text.Label(w2, 
+            temp2 = pyglet.text.Label(corrected_text[2], 
                     font_name='monospace',
                     font_size=keyboardFontSize,
                     color=(keyboardFontColour[0],keyboardFontColour[1],keyboardFontColour[2],keyboardFontColour[3]),
