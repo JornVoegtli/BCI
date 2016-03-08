@@ -32,7 +32,6 @@ class MyOVBox(OVBox):
 				#print 'Flashing row/col:', stim.identifier
 				if (stim.identifier==self.target[0] or stim.identifier==self.target[1]):
 					self.sendOutput(0,OVTK_StimulationId_Target)
-					#print 'MATCH'
 				else:
 					self.sendOutput(0,OVTK_StimulationId_NonTarget)
         return
