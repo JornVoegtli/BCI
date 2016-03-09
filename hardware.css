@@ -237,7 +237,10 @@ header .header-content .header-content-inner p {
 		font-size: 18px;
 	}
 }
-
+.mega-octicon{
+	font-size: 64px;
+	text-align: center;
+}
 .section-heading {
 	margin-top: 0;
 }

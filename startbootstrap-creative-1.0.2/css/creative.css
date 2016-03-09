@@ -238,6 +238,40 @@ header .header-content .header-content-inner p {
         font-size: 18px;
     }
 }
+#linkToPrices{
+	position: relative;
+}
+
+div#table{
+	position: relative;
+	top: -50px;
+}
+
+#howItWorks{
+	position: relative;
+	top: -10px;
+}
+
+.pic{
+	position: absolute;
+	height: 100px;
+	width: 200px;
+}
+
+.pic img{
+	height: auto;
+	width: 200px;
+}
+
+div:nth-child(1){
+	left: 30px;
+	top: 10px;
+}
+
+div:nth-child(2){
+	left: 260px;
+	top: 50px;
+}
 
 .section-heading {
     margin-top: 0;
