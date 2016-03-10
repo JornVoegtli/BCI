@@ -73,7 +73,7 @@ widgetPositionY = UISize*height/12
 widgetHeight = height-widgetPositionY
 keyboardPositionTop = widgetPositionY - height/12
 #character casing
-upperCase = False
+upperCase = True
 ####################################################################
 
 class MyOVBox(OVBox):
@@ -81,20 +81,19 @@ class MyOVBox(OVBox):
         OVBox.__init__(self)
             
     def initialize(self): 
+        self.initOutputs() # Set output stimulation headers
+
         # Called once when starting the scenario
         self.loopCounter = 0
         self.target = [0,0]
         self.selection = [0,0]
-	self.rowIndex = 0
-	self.colIndex = 0
+    	self.rowIndex = 0
+    	self.colIndex = 0
         self.hashTable = {12:5,11:4,10:3,9:2,8:1,7:0,6:6,5:7,4:8,3:9,2:10,1:11}
-
-        # I/O
-        self.initOutputs() # Set output stimulation headers
 
         # Pyglet
         #create window
-        self.win = window.Window(fullscreen = False)
+        self.win = window.Window(fullscreen = True)
         
         #colour background and set up openGL rendering
         glClearColor(backgroundColour[0], backgroundColour[1], backgroundColour[2], backgroundColour[3])
@@ -107,7 +106,7 @@ class MyOVBox(OVBox):
         
         #set up user input text display
         self.batch = pyglet.graphics.Batch()
-        self.widget = user_input.TextWidget('', 0, int(widgetPositionY), int(width),int(widgetHeight), self.batch)
+        self.widget = user_input.TextWidget('', 0, int(widgetPositionY), int(width), int(widgetHeight), self.batch)
         self.text_input = ""
         self.widget.caret.on_text(self.text_input)
         self.current_text = "" 
@@ -123,7 +122,7 @@ class MyOVBox(OVBox):
                 ypos = keyboardPositionTop - (j)*(keyboardPositionTop/5)
                 xpos  = i*width/6
                 temp = pyglet.text.Label(line, 
-                    font_name='Arial',
+                    font_name='Courier New',
                     font_size=keyboardFontSize,
                     color=(keyboardFontColour[0],keyboardFontColour[1],keyboardFontColour[2],keyboardFontColour[3]),
                     x=xpos, y=ypos,
@@ -137,7 +136,6 @@ class MyOVBox(OVBox):
 
     def endExperiment(self):
         print("Quitting experiment.")
-        self.closeOutputs()
         self.sendOutput(0, OVTK_StimulationId_Label_00)
         self.win.close()
         return 
@@ -184,6 +182,7 @@ class MyOVBox(OVBox):
         if self.win.has_exit:
             self.endExperiment()
         else:
+            """
             # Read target 
             for chunkIndex in range( len(self.input[1]) ):
                 chunk = self.input[1].pop()
@@ -195,6 +194,7 @@ class MyOVBox(OVBox):
                         elif (33031 <= stim.identifier and stim.identifier <= 33036): # Column
                             self.target[1] = stim.identifier
                         self.drawTarget(self.target[0]-OVTK_StimulationId_Label_01, self.target[1]-OVTK_StimulationId_Label_07)
+            """
 
             # Read flashes
     	    for chunkIndex in range( len(self.input[0]) ):
@@ -203,7 +203,7 @@ class MyOVBox(OVBox):
                     for stimIdx in range(len(chunk)):
 			stim = chunk.pop()
                         self.drawFlash(self.flashRC-OVTK_StimulationId_Label_00)
-
+            """
             # Read row selection
             for chunkIndex in range( len(self.input[2]) ):
                 chunk = self.input[2].pop()
@@ -221,7 +221,7 @@ class MyOVBox(OVBox):
                         stim=chunk.pop();
                         self.selection[1] = stim.identifier
                         self.colIndex = self.selection[1] - OVTK_StimulationId_Label_07
-                        
+            """   
             self.text_input = textUC[self.rowIndex][self.colIndex]
             self.current_text = self.current_text + self.text_input
             self.widget.caret.on_text(self.text_input)
@@ -241,7 +241,7 @@ class MyOVBox(OVBox):
             ypos = keyboardPositionTop - (0)*(keyboardPositionTop/5)
             xpos  = 0*width/6
             temp0 = pyglet.text.Label(corrected_text[0], 
-                    font_name='monospace',
+                    font_name='Courier New',
                     font_size=keyboardFontSize,
                     color=(keyboardFontColour[0],keyboardFontColour[1],keyboardFontColour[2],keyboardFontColour[3]),
                     x=xpos, y=ypos,
@@ -250,7 +250,7 @@ class MyOVBox(OVBox):
             ypos = keyboardPositionTop - (0)*(keyboardPositionTop/5)
             xpos  = 1*width/6
             temp1 = pyglet.text.Label(corrected_text[1], 
-                    font_name='monospace',
+                    font_name='Courier New',
                     font_size=keyboardFontSize,
                     color=(keyboardFontColour[0],keyboardFontColour[1],keyboardFontColour[2],keyboardFontColour[3]),
                     x=xpos, y=ypos,
@@ -259,7 +259,7 @@ class MyOVBox(OVBox):
             ypos = keyboardPositionTop - (0)*(keyboardPositionTop/5)
             xpos  = 2*width/6
             temp2 = pyglet.text.Label(corrected_text[2], 
-                    font_name='monospace',
+                    font_name='Courier New',
                     font_size=keyboardFontSize,
                     color=(keyboardFontColour[0],keyboardFontColour[1],keyboardFontColour[2],keyboardFontColour[3]),
                     x=xpos, y=ypos,
@@ -301,6 +301,7 @@ class MyOVBox(OVBox):
             end = self.getCurrentTime()
             self.output[index].append(OVStimulationEnd(end, end))
         return 
+
 
 OVTK_StimulationId_Target = 33285
 OVTK_StimulationId_Label_00 = 33024
