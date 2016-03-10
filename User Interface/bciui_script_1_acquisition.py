@@ -12,7 +12,13 @@ import ctypes
 #sys.path.append(r'C:\Users\AARON\Dropbox\EE2 BCI Project\User Interface\bciuiv7')
 #c:/"program files (x86)"/openvibe/openvibe-designer
 
-#keyboard text
+
+OVTK_StimulationId_Target = 33285
+OVTK_StimulationId_Label_00 = 33024
+OVTK_StimulationId_Label_01 = 33025
+OVTK_StimulationId_Label_07 = 33031
+
+# Keyboard matrix
 text = [ ['A','B','C','D','E',u"\u2190"], 
                 ['F','G','H','I','J','ENTER'], 
                 ['K','L','M','N','O','abc'], 
@@ -27,7 +33,7 @@ text = [ ['A','B','C','D','E',u"\u2190"],
 #         ['u','v','w','x',u"\u25B2",'{&='], 
 #         ['y','z','SPACE',u"\u25C4",u"\u25BC", u"\u25BA"] ]
 
-#get window parameters
+# Get window parameters
 user32 = ctypes.windll.user32
 width = user32.GetSystemMetrics(0)
 height = user32.GetSystemMetrics(1)
@@ -106,25 +112,28 @@ class MyOVBox(OVBox):
         self.text_input = ""
         self.widget.caret.on_text(self.text_input)
         
-        #set up user keyboard display
-        self.words = []
+        #set up user keyboard matrix
+        self.matrix = []
         for j in range(0, len(text) ):
+            row = []
             for i in range(0, len(text[j]) ):
                 line = text[j][i]
                 ypos = keyboardPositionTop - (j)*(keyboardPositionTop/5)
-                xpos  = i*width/6
+                xpos = i*width/6
                 temp = pyglet.text.Label(line, 
-                    font_name='monospace',
+                    font_name='Courier New',
                     font_size=keyboardFontSize,
                     color=(keyboardFontColour[0],keyboardFontColour[1],keyboardFontColour[2],keyboardFontColour[3]),
                     x=xpos, y=ypos,
                     anchor_x='left', anchor_y='bottom')
-                self.words.append(temp)
+                row.append(temp)
+            self.matrix.append(row)
 
         #set up window rendering
         self.win.dispatch_events()
         self.win.flip()
         return
+
     def predictText(string):
         words = string.split(' ')
         if len(words[-1]) > 0: 
@@ -143,13 +152,13 @@ class MyOVBox(OVBox):
         self.win.close()
         return 
 
-    def getNextFlash(self):
+    def readFlash(self):
         if len(self.flashes) < 1:
             print("Reached end of flashes file.")
             self.endExperiment()
         else:
-            self.flashRC = self.flashes.pop(0)
-        return
+            return self.flashes.pop(0)
+        return None
 
     def getNextTarget(self):
         if len(self.targets) < 1:
@@ -160,42 +169,53 @@ class MyOVBox(OVBox):
             self.target[1] = self.targets.pop(0)
         return 
 
-    def drawTarget(self, targetRow, targetCol):
-        if(isDrawTarget):
-            primitives.drawRect(targetCol*width/6, (5-targetRow)*(keyboardPositionTop/5), targetSize[0], targetSize[1], targetColour[0],targetColour[1],targetColour[2],targetColour[3])
+    def drawTarget(self, rowStim, colStim):
+        if (isDrawTarget):
+            rowNum = rowStim - OVTK_StimulationId_Label_01
+            colNum = colStim - OVTK_StimulationId_Label_07
+            x = colNum * width / 6
+            y = (5-rowNum) * (keyboardPositionTop/5)
+            primitives.drawRect(x, y, targetSize[0], targetSize[1], targetColour[0],targetColour[1],targetColour[2],targetColour[3])
         return
-    
-    def drawFlash(self, rowcol):
-        rowcolMap = self.hashTable[rowcol]
-        #text enlargement mode
-        if(isEnlargeTextMode):
-            if(rowcolMap < 6 and isDrawVertFlash):
-                tmp = rowcolMap
-                for i in range (len(self.words)):
-                    if(i == tmp):
-                        self.words[i].font_size = keyboardEnlargeFontSize
-                        self.words[i].color = (keyboardEnlargeFontColour[0],keyboardEnlargeFontColour[1],keyboardEnlargeFontColour[2],keyboardEnlargeFontColour[3])
-                        tmp = tmp +6
-                    else:
-                        self.words[i].font_size = keyboardFontSize
-                        self.words[i].color = (keyboardFontColour[0],keyboardFontColour[1],keyboardFontColour[2],keyboardFontColour[3])
-            elif(rowcolMap < 12 and isDrawHorizFlash):
-                tmp = (rowcolMap-11)*-6
-                for i in range (len(self.words)):
-                    if(i == tmp and i < (rowcolMap-11)*-6 + 6):
-                        self.words[i].font_size = keyboardEnlargeFontSize
-                        self.words[i].color = (keyboardEnlargeFontColour[0],keyboardEnlargeFontColour[1],keyboardEnlargeFontColour[2],keyboardEnlargeFontColour[3])
-                        tmp = tmp + 1
-                    else:
-                        self.words[i].font_size = keyboardFontSize                        
-                        self.words[i].color = (keyboardFontColour[0],keyboardFontColour[1],keyboardFontColour[2],keyboardFontColour[3])
-        
-        if(isHighlightTextMode):    
-            if (rowcol < 6 and isDrawVertFlash):
+
+    def startFlash(self, rowcol):
+        # If column
+        if (rowcol <= 5 and isDrawVertFlash):
+            if (isEnlargeTextMode):
+                c = rowcol
+                for r in range(0, len(self.matrix)):
+                    self.matrix[r][c].font_size = keyboardEnlargeFontSize
+                    self.matrix[r][c].color = (keyboardEnlargeFontColour[0],keyboardEnlargeFontColour[1],keyboardEnlargeFontColour[2],keyboardEnlargeFontColour[3])
+            if (isHighlightTextMode):
                 primitives.drawRect(rowcol*width/6, 0, vertFlashSize[0], vertFlashSize[1], vertFlashColour[0],vertFlashColour[1],vertFlashColour[2],vertFlashColour[3])
-            elif (rowcol < 12 and isDrawHorizFlash):
+        # If row
+        elif (rowcol <= 11 and isDrawHorizFlash):
+            if (isEnlargeTextMode):
+                r = rowcol%6
+                for c in range(0, len(self.matrix[r])):
+                    self.matrix[r][c].font_size = keyboardEnlargeFontSize
+                    self.matrix[r][c].color = (keyboardEnlargeFontColour[0],keyboardEnlargeFontColour[1],keyboardEnlargeFontColour[2],keyboardEnlargeFontColour[3])
+            if (isHighlightTextMode):
                 primitives.drawRect(0, rowcol%6*height/12, horizFlashSize[0], horizFlashSize[1], horizFlashColour[0], horizFlashColour[1], horizFlashColour[2], horizFlashColour[3])
-        return         
+        return
+
+    def stopFlash(self, rowcol):
+        if (isEnlargeTextMode == False): 
+            return # No need to stopFlash if text is not enlarged
+
+        # If column
+        if (rowcol <= 5 and isDrawVertFlash):
+            c = rowcol
+            for r in range(0, len(self.matrix)):
+                self.matrix[r][c].font_size = keyboardFontSize
+                self.matrix[r][c].color = (keyboardFontColour[0],keyboardFontColour[1],keyboardFontColour[2],keyboardFontColour[3])
+        # If row
+        elif (rowcol <= 11 and isDrawHorizFlash):
+            r = rowcol%6
+            for c in range(0, len(self.matrix[r])):
+                self.matrix[r][c].font_size = keyboardFontSize
+                self.matrix[r][c].color = (keyboardFontColour[0],keyboardFontColour[1],keyboardFontColour[2],keyboardFontColour[3])
+        return 
 
     def process(self): # Called on each box clock tick (this can be configured by right-clicking the box)
         self.win.dispatch_events()
@@ -204,33 +224,40 @@ class MyOVBox(OVBox):
         if self.win.has_exit:
             self.endExperiment()
         else:
-            # Draw background
-            #primitives.drawRect(0,height/2,width,height/2,4/51,4/51,4/51,255)
-            # Show a target for the first targetDelay loops
+            # Show a target for the first target
             if (self.loopCounter <= targetDelay):
                 if (self.loopCounter == 0):
                     self.getNextTarget()
                     self.sendOutput(2, self.target[0])
                     self.sendOutput(2, self.target[1])
-                self.drawTarget(self.target[0]-OVTK_StimulationId_Label_01, self.target[1]-OVTK_StimulationId_Label_07)
+                self.drawTarget(self.target[0], self.target[1])
+
             # Flash for the next 50 loops
             elif (self.loopCounter <= targetDelay + 50):
-                self.getNextFlash()
-                self.drawFlash(self.flashRC-OVTK_StimulationId_Label_00)
-                print(self.flashRC)
-                # Send output
-                self.sendOutput(1, self.flashRC)
+                newStim = self.readFlash()
+                # Aim row/column flash
+                if (33025 <= newStim and newStim <= 33036):
+                    self.flash = self.hashTable[newStim - OVTK_StimulationId_Label_00]
+                # Start flash
+                elif (newStim == 32779): 
+                    self.startFlash(self.flash)
+                # Stop flash
+                elif (newStim == 32780):
+                    self.stopFlash(self.flash)
+
+                self.sendOutput(1, newStim)
                 # Reset counter on last loop
                 if (self.loopCounter == targetDelay + 50): 
                     self.loopCounter = -1
 
-            # Pyglet/GL updates        
-            #draw input display
-            self.batch.draw() 
-            #draw keyboard text
-            for i in range (0,len(self.words)):
-                self.words[i].draw()
+            # Draw keyboard matrix
+            for r in range (0,len(self.matrix)):
+                for c in range(0, len(self.matrix[r])):
+                    self.matrix[r][c].draw()
             
+            # Pyglet/GL updates        
+            self.batch.draw() 
+
             self.win.flip()
             self.loopCounter += 1
         return
@@ -259,8 +286,4 @@ class MyOVBox(OVBox):
             self.output[index].append(OVStimulationEnd(end, end))
         return 
 
-OVTK_StimulationId_Target = 33285
-OVTK_StimulationId_Label_00 = 33024
-OVTK_StimulationId_Label_01 = 33025
-OVTK_StimulationId_Label_07 = 33031
 box = MyOVBox()
