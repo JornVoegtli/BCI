@@ -52,7 +52,7 @@ p {
 }
 
 .bg-primary {
-	background-color: #f05f40;
+	background-color: #f37e66;
 }
 
 .bg-dark {
@@ -147,7 +147,7 @@ aside {
 	}
 	.navbar-default.affix .navbar-header .navbar-brand {
 		font-size: 14px;
-		color: #f05f40;
+		color: #f37e66;
 	}
 	.navbar-default.affix .navbar-header .navbar-brand:hover,
 	.navbar-default.affix .navbar-header .navbar-brand:focus {
@@ -159,7 +159,7 @@ aside {
 	}
 	.navbar-default.affix .nav > li>a:hover,
 	.navbar-default.affix .nav>li>a:focus:hover {
-		color: #f05f40;
+		color: #f37e66;
 	}
 }
 
@@ -169,7 +169,7 @@ header {
 	height: 100%;
 	text-align: center;
 	color: #fff;
-	background-color: #F05F40;
+	background-color: #f37e66;
 	background-position: center;
 	-webkit-background-size: cover;
 	-moz-background-size: cover;
@@ -203,49 +203,50 @@ header .header-content {
 }
 
 .header-content-inner div:nth-child(1){
-	left: 270px;
+	left: 365px;
 	top: 100px;
 }
 
 .header-content-inner div:nth-child(2){
-	left: 0px;
-	top: 300px;
+	left: 100px;
+	top: 160px;
 }
 
 .header-content-inner div:nth-child(3){
-	left: 280px;
+	left: 330px;
 	top: 300px;
 }
 
 .header-content-inner div:nth-child(4){
-	left: 560px;
+	left: 730px;
 	top: 300px;
 }
 
 .header-content-inner div:nth-child(5){
-	left: 840px;
-	top: 300px;
+	left: 950px;
+	top: 160px;
 }
 
 .header-content-inner div:nth-child(6){
-	left: 140px;
-	top: 500px;
+	left: 150px;
+	top: 430px;
 }
 
 .header-content-inner div:nth-child(7){
-	left: 420px;
-	top: 500px;
+	left: 525px;
+	top: 430px;
 }
 
 .header-content-inner div:nth-child(8){
-	left: 700px;
-	top: 500px;
+	left: 900px;
+	top: 430px;
 }
 
 .logo{
 	border-radius: 10px !important;
 	height: 150px !important;
 	width: auto !important;
+	background-color: #f4b491
 }
 
 @media(min-width:768px) {
@@ -263,7 +264,7 @@ header .header-content {
 	header .header-content .header-content-inner {
 		margin-right: auto;
 		margin-left: auto;
-		max-width: 1000px;
+		max-width: 1200px;
 	}
 }
 
