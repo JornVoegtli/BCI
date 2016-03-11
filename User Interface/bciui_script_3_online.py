@@ -98,7 +98,7 @@ class MyOVBox(OVBox):
 
         # Pyglet
         #create window
-        self.win = window.Window(fullscreen = True)
+        self.win = window.Window(fullscreen = False)
         
         #colour background and set up openGL rendering
         glClearColor(backgroundColour[0], backgroundColour[1], backgroundColour[2], backgroundColour[3])
