@@ -119,7 +119,8 @@ class MyOVBox(OVBox):
             text = textUC
         else:
             text = textLC
-
+        self.alphabet = "NEUROSPELL"
+        self.numberalph = 0
 
         #set up user keyboard matrix
         self.matrix = []
@@ -223,8 +224,17 @@ class MyOVBox(OVBox):
                 if (type(chunk) == OVStimulationSet):
                     for stimIdx in range(len(chunk)):
                         stim = chunk.pop()
-                        self.drawFlash(stim.identifier-OVTK_StimulationId_Label_00)
-                        print("Flash", stim.identifier)
+                        newStim = stim.identifier
+                        # Aim row/column flash
+                        if (33025 <= newStim and newStim <= 33036):
+                            self.flash = self.hashTable[newStim - OVTK_StimulationId_Label_00]
+                        # Start flash
+                        elif (newStim == 32779): 
+                            self.startFlash(self.flash)
+                        # Stop flash
+                        elif (newStim == 32780):
+                            self.stopFlash(self.flash)
+                        print("Flash", newStim)
             """
             # Read row selection
             for chunkIndex in range( len(self.input[2]) ):
@@ -251,13 +261,15 @@ class MyOVBox(OVBox):
             self.text_input = ""
 
             if (self.keys[key.A]):
-                self.text_input = "gr"
+                self.text_input = self.alphabet[self.numberalph]
                 self.current_text = self.current_text + self.text_input
                 self.widget.caret.on_text(self.text_input)
                 self.text_input = ""
+                self.numberalph += 1
+                self.numberalph = self.numberalph % 10
 
             ## Predictive text
-            corrected_text = ["herro", "yerrow", "ferrow"] #word_predictor.correct(self.current_text)
+            corrected_text = [".", ",", "@"] #word_predictor.correct(self.current_text)
             ypos = keyboardPositionTop - (0)*(keyboardPositionTop/5)
             xpos  = 0*width/6
             temp0 = pyglet.text.Label(corrected_text[0], 
