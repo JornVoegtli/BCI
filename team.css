@@ -76,6 +76,11 @@ aside {
 	padding: 0;
 }
 
+.littlelogo{
+	height: 30px;
+	width: auto;
+}
+
 .navbar-default {
 	border-color: rgba(34, 34, 34, .05);
 	font-family: 'Open Sans', 'Helvetica Neue', Arial, sans-serif;
@@ -205,7 +210,7 @@ header .header-content {
 }
 
 .header-content-inner div:nth-child(1) {
-	left: 35%;
+	left: 10%;
 	top: 10%;
 }
 
