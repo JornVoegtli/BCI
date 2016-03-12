@@ -52,7 +52,7 @@ p {
 }
 
 .bg-primary {
-	background-color: #f05f40;
+	background-color: #e8694e;
 }
 
 .bg-dark {
@@ -74,6 +74,15 @@ aside {
 
 .no-padding {
 	padding: 0;
+}
+
+.navbar-header{
+	position: relative;
+}
+
+.littlelogo{
+	height: 30px;
+	width: auto;
 }
 
 .navbar-default {
@@ -225,6 +234,10 @@ header .header-content .header-content-inner p {
 		max-width: 80%;
 		font-size: 18px;
 	}
+}
+
+.logo{
+	width: 70%
 }
 
 #linkToPrices {
