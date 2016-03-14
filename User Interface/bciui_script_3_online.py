@@ -246,20 +246,20 @@ class MyOVBox(OVBox):
             chunk = self.input[1].pop()
             if(type(chunk) == OVStimulationSet):
                 for stimIdx in range(len(chunk)):
-                    stim=chunk.pop(0); # OMGGGGGGG WHAT A CRAZY DETAIL JUN SHERN YOU'RE A GENIUS.
+                    stim = chunk.pop(0); # OMGGGGGGG WHAT A CRAZY DETAIL JUN SHERN YOU'RE A GENIUS.
                     if (33025 <= stim.identifier and stim.identifier <= 33030): # Row
                         self.target[0] = stim.identifier
                     elif (33031 <= stim.identifier and stim.identifier <= 33036): # Column
                         self.target[1] = stim.identifier
                         # Only draw target upon registering new column, so the pair will be complete
                         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT) # Set up background
-                        self.drawTarget(self.target[0]-OVTK_StimulationId_Label_01, self.target[1]-OVTK_StimulationId_Label_07)
-                        #self.batch.draw() 
-                        # for r in range (0,len(self.matrix)):
-                        #     for c in range(0, len(self.matrix[r])):
-                        #         self.matrix[r][c].draw()
+                        self.drawTarget(self.target[0], self.target[1])
+                        self.batch.draw() 
+                        for r in range (0,len(self.matrix)):
+                            for c in range(0, len(self.matrix[r])):
+                                self.matrix[r][c].draw()
                         self.win.flip()
-                        #print("Target", self.target[0], " ", self.target[1])
+                        print("Target", self.target[0], " ", self.target[1])
 
         # """
         # if self.win.has_exit:
