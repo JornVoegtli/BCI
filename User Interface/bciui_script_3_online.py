@@ -98,7 +98,7 @@ class MyOVBox(OVBox):
 
         # Pyglet
         #create window
-        self.win = window.Window(fullscreen = False)
+        self.win = window.Window(fullscreen = True)
         
         #colour background and set up openGL rendering
         glClearColor(backgroundColour[0], backgroundColour[1], backgroundColour[2], backgroundColour[3])
@@ -197,122 +197,184 @@ class MyOVBox(OVBox):
                 self.matrix[r][c].font_size = keyboardFontSize
                 self.matrix[r][c].color = (keyboardFontColour[0],keyboardFontColour[1],keyboardFontColour[2],keyboardFontColour[3])
         return 
-     
-
+    
     def process(self): # Called on each box clock tick (this can be configured by right-clicking the box)
-
+        # Handle exit
+        self.win.dispatch_events()
         if self.win.has_exit:
             self.endExperiment()
-        else:
-            
-            # Read target 
-            for chunkIndex in range( len(self.input[1]) ):
-                chunk = self.input[1].pop()
-                if(type(chunk) == OVStimulationSet):
-                    for stimIdx in range(len(chunk)):
-                        stim=chunk.pop();
-                        if (33025 <= stim.identifier and stim.identifier <= 33030): # Row
-                            self.target[0] = stim.identifier
-                        elif (33031 <= stim.identifier and stim.identifier <= 33036): # Column
-                            self.target[1] = stim.identifier
+
+        # Read flashes
+        for chunkIndex in range( len(self.input[0]) ):
+            chunk = self.input[0].pop()
+            if (type(chunk) == OVStimulationSet):
+                for stimIdx in range(len(chunk)):
+                    stim = chunk.pop(0)
+                    newStim = stim.identifier
+                    # Aim row/column flash
+                    if (33025 <= newStim and newStim <= 33036):
+                        self.flash = self.hashTable[newStim - OVTK_StimulationId_Label_00]
+                    # Start flash
+                    elif (newStim == 32779): 
+                        self.startFlash(self.flash)
+                        # Draw 
+                        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT) # Set up background
+                        self.batch.draw() 
+                        for r in range (0,len(self.matrix)):
+                            for c in range(0, len(self.matrix[r])):
+                                self.matrix[r][c].draw()
+                        self.win.flip()
+                    # Stop flash
+                    elif (newStim == 32780):
+                        self.stopFlash(self.flash)
+                        # Draw 
+                        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT) # Set up background
+                        self.batch.draw() 
+                        for r in range (0,len(self.matrix)):
+                            for c in range(0, len(self.matrix[r])):
+                                self.matrix[r][c].draw()
+                        self.win.flip()
+    
+        # Read target
+        for chunkIndex in range( len(self.input[1]) ):
+            chunk = self.input[1].pop()
+            if(type(chunk) == OVStimulationSet):
+                for stimIdx in range(len(chunk)):
+                    stim=chunk.pop(0); # OMGGGGGGG WHAT A CRAZY DETAIL JUN SHERN YOU'RE A GENIUS.
+                    if (33025 <= stim.identifier and stim.identifier <= 33030): # Row
+                        self.target[0] = stim.identifier
+                    elif (33031 <= stim.identifier and stim.identifier <= 33036): # Column
+                        self.target[1] = stim.identifier
+                        # Only draw target upon registering new column, so the pair will be complete
                         self.drawTarget(self.target[0]-OVTK_StimulationId_Label_01, self.target[1]-OVTK_StimulationId_Label_07)
-                        print("Target", self.target[0], " ", self.target[1])
+                        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT) # Set up background
+                        self.batch.draw() 
+                        for r in range (0,len(self.matrix)):
+                            for c in range(0, len(self.matrix[r])):
+                                self.matrix[r][c].draw()
+                        self.win.flip()
+                        #print("Target", self.target[0], " ", self.target[1])
 
-            # Read flashes
-    	    for chunkIndex in range( len(self.input[0]) ):
-    	    	chunk = self.input[0].pop()
-                if (type(chunk) == OVStimulationSet):
-                    for stimIdx in range(len(chunk)):
-                        stim = chunk.pop()
-                        newStim = stim.identifier
-                        # Aim row/column flash
-                        if (33025 <= newStim and newStim <= 33036):
-                            self.flash = self.hashTable[newStim - OVTK_StimulationId_Label_00]
-                        # Start flash
-                        elif (newStim == 32779): 
-                            self.startFlash(self.flash)
-                        # Stop flash
-                        elif (newStim == 32780):
-                            self.stopFlash(self.flash)
-                        print("Flash", newStim)
-            """
-            # Read row selection
-            for chunkIndex in range( len(self.input[2]) ):
-                chunk = self.input[2].pop()
-                if(type(chunk) == OVStimulationSet):
-                    for stimIdx in range(len(chunk)):
-                        stim=chunk.pop()
-                        self.selection[0] = stim.identifier
-                        self.rowIndex = self.selection[0] - OVTK_StimulationId_Label_01
-                        print("Row select", stim.identifier)
+        # """
+        # if self.win.has_exit:
+        #     self.endExperiment()
+        # else:
+            
+        #     print("Running loop")
+        #     # Read target 
+        #     for chunkIndex in range( len(self.input[1]) ):
+        #         self.win.dispatch_events()
+        #         chunk = self.input[1].pop()
+        #         if(type(chunk) == OVStimulationSet):
+        #             for stimIdx in range(len(chunk)):
+        #                 stim=chunk.pop();
+        #                 if (33025 <= stim.identifier and stim.identifier <= 33030): # Row
+        #                     self.target[0] = stim.identifier
+        #                 elif (33031 <= stim.identifier and stim.identifier <= 33036): # Column
+        #                     self.target[1] = stim.identifier
+        #                 self.drawTarget(self.target[0]-OVTK_StimulationId_Label_01, self.target[1]-OVTK_StimulationId_Label_07)
+        #                 print("Target", self.target[0], " ", self.target[1])
+            
+
+        #     # Read flashes
+    	   #  for chunkIndex in range( len(self.input[0]) ):
+    	   #  	chunk = self.input[0].pop()
+        #         if (type(chunk) == OVStimulationSet):
+        #             for stimIdx in range(len(chunk)):
+        #                 stim = chunk.pop()
+        #                 newStim = stim.identifier
+        #                 # Aim row/column flash
+        #                 if (33025 <= newStim and newStim <= 33036):
+        #                     self.flash = self.hashTable[newStim - OVTK_StimulationId_Label_00]
+        #                 # Start flash
+        #                 elif (newStim == 32779): 
+        #                     self.startFlash(self.flash)
+        #                 # Stop flash
+        #                 elif (newStim == 32780):
+        #                     self.stopFlash(self.flash)
+        #                 #print("Flash", newStim)
+            
+        #     # Read row selection
+        #     for chunkIndex in range( len(self.input[2]) ):
+        #         chunk = self.input[2].pop()
+        #         if(type(chunk) == OVStimulationSet):
+        #             for stimIdx in range(len(chunk)):
+        #                 stim=chunk.pop()
+        #                 self.selection[0] = stim.identifier
+        #                 self.rowIndex = self.selection[0] - OVTK_StimulationId_Label_01
+        #                 print("Row select", stim.identifier)
                         
-            # Read column selection
-            for chunkIndex in range( len(self.input[3]) ):
-                chunk = self.input[3].pop()
-                if(type(chunk) == OVStimulationSet):
-                    for stimIdx in range(len(chunk)):
-                        stim=chunk.pop();
-                        self.selection[1] = stim.identifier
-                        self.colIndex = self.selection[1] - OVTK_StimulationId_Label_07
-                        print("Column select", stim.identifier)
-            """
-            self.current_text = self.current_text + self.text_input
-            self.widget.caret.on_text(self.text_input)
-            self.text_input = ""
+        #     # Read column selection
+        #     for chunkIndex in range( len(self.input[3]) ):
+        #         chunk = self.input[3].pop()
+        #         if(type(chunk) == OVStimulationSet):
+        #             for stimIdx in range(len(chunk)):
+        #                 stim=chunk.pop();
+        #                 self.selection[1] = stim.identifier
+        #                 self.colIndex = self.selection[1] - OVTK_StimulationId_Label_07
+        #                 print("Column select", stim.identifier)
+        #     """
+        #     """
+        #     self.current_text = self.current_text + self.text_input
+        #     self.widget.caret.on_text(self.text_input)
+        #     self.text_input = ""
 
-            if (self.keys[key.A]):
-                self.text_input = self.alphabet[self.numberalph]
-                self.current_text = self.current_text + self.text_input
-                self.widget.caret.on_text(self.text_input)
-                self.text_input = ""
-                self.numberalph += 1
-                self.numberalph = self.numberalph % 10
+        #     if (self.keys[key.A]):
+        #         self.text_input = self.alphabet[self.numberalph]
+        #         self.current_text = self.current_text + self.text_input
+        #         self.widget.caret.on_text(self.text_input)
+        #         self.text_input = ""
+        #         self.numberalph += 1
+        #         self.numberalph = self.numberalph % 10
 
-            ## Predictive text
-            corrected_text = [".", ",", "@"] #word_predictor.correct(self.current_text)
-            ypos = keyboardPositionTop - (0)*(keyboardPositionTop/5)
-            xpos  = 0*width/6
-            temp0 = pyglet.text.Label(corrected_text[0], 
-                    font_name='Courier New',
-                    font_size=keyboardFontSize,
-                    color=(keyboardFontColour[0],keyboardFontColour[1],keyboardFontColour[2],keyboardFontColour[3]),
-                    x=xpos, y=ypos,
-                    anchor_x='left', anchor_y='bottom')
+        #     ## Predictive text
+        #     corrected_text = [".", ",", "@"] #word_predictor.correct(self.current_text)
+        #     ypos = keyboardPositionTop - (0)*(keyboardPositionTop/5)
+        #     xpos  = 0*width/6
+        #     temp0 = pyglet.text.Label(corrected_text[0], 
+        #             font_name='Courier New',
+        #             font_size=keyboardFontSize,
+        #             color=(keyboardFontColour[0],keyboardFontColour[1],keyboardFontColour[2],keyboardFontColour[3]),
+        #             x=xpos, y=ypos,
+        #             anchor_x='left', anchor_y='bottom')
            
-            ypos = keyboardPositionTop - (0)*(keyboardPositionTop/5)
-            xpos  = 1*width/6
-            temp1 = pyglet.text.Label(corrected_text[1], 
-                    font_name='Courier New',
-                    font_size=keyboardFontSize,
-                    color=(keyboardFontColour[0],keyboardFontColour[1],keyboardFontColour[2],keyboardFontColour[3]),
-                    x=xpos, y=ypos,
-                    anchor_x='left', anchor_y='bottom')
+        #     ypos = keyboardPositionTop - (0)*(keyboardPositionTop/5)
+        #     xpos  = 1*width/6
+        #     temp1 = pyglet.text.Label(corrected_text[1], 
+        #             font_name='Courier New',
+        #             font_size=keyboardFontSize,
+        #             color=(keyboardFontColour[0],keyboardFontColour[1],keyboardFontColour[2],keyboardFontColour[3]),
+        #             x=xpos, y=ypos,
+        #             anchor_x='left', anchor_y='bottom')
             
-            ypos = keyboardPositionTop - (0)*(keyboardPositionTop/5)
-            xpos  = 2*width/6
-            temp2 = pyglet.text.Label(corrected_text[2], 
-                    font_name='Courier New',
-                    font_size=keyboardFontSize,
-                    color=(keyboardFontColour[0],keyboardFontColour[1],keyboardFontColour[2],keyboardFontColour[3]),
-                    x=xpos, y=ypos,
-                    anchor_x='left', anchor_y='bottom')
-            self.matrix[0][0] = temp0
-            self.matrix[0][1] = temp1
-            self.matrix[0][2] = temp2
+        #     ypos = keyboardPositionTop - (0)*(keyboardPositionTop/5)
+        #     xpos  = 2*width/6
+        #     temp2 = pyglet.text.Label(corrected_text[2], 
+        #             font_name='Courier New',
+        #             font_size=keyboardFontSize,
+        #             color=(keyboardFontColour[0],keyboardFontColour[1],keyboardFontColour[2],keyboardFontColour[3]),
+        #             x=xpos, y=ypos,
+        #             anchor_x='left', anchor_y='bottom')
+        #     self.matrix[0][0] = temp0
+        #     self.matrix[0][1] = temp1
+        #     self.matrix[0][2] = temp2
+        # """
+            
+        #     # Pyglet/GL updates        
+        #     #self.win.dispatch_events()
+        #     """
+        #     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT) # Set up background
+        #     self.batch.draw() 
+        #     # Draw keyboard matrix
+        #     for r in range (0,len(self.matrix)):
+        #         for c in range(0, len(self.matrix[r])):
+        #             self.matrix[r][c].draw()
             
             
-            # Pyglet/GL updates        
-            self.win.dispatch_events()
-            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT) # Set up background
-            self.batch.draw() 
-            # Draw keyboard matrix
-            for r in range (0,len(self.matrix)):
-                for c in range(0, len(self.matrix[r])):
-                    self.matrix[r][c].draw()
+        #     self.win.flip()
             
-            
-            self.win.flip()
-            self.loopCounter += 1
+        #     self.loopCounter += 1
+        #     """   
         return
 
     def uninitialize(self): # Called once when stopping the scenario
