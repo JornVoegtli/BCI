@@ -199,10 +199,16 @@ class MyOVBox(OVBox):
         return 
     
     def process(self): # Called on each box clock tick (this can be configured by right-clicking the box)
-        # Handle exit
         self.win.dispatch_events()
+        # Stop 
         if self.win.has_exit:
             self.endExperiment()
+        # Fast forward
+        if (self.keys[key.F]):
+            self.sendOutput(1, OVTK_StimulationId_Label_00)
+        # Play 
+        if (self.keys[key.P]):
+            self.sendOutput(2, OVTK_StimulationId_Label_00)
 
         # Read flashes
         for chunkIndex in range( len(self.input[0]) ):
@@ -219,7 +225,7 @@ class MyOVBox(OVBox):
                         self.startFlash(self.flash)
                         # Draw 
                         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT) # Set up background
-                        self.batch.draw() 
+                        #self.batch.draw() 
                         for r in range (0,len(self.matrix)):
                             for c in range(0, len(self.matrix[r])):
                                 self.matrix[r][c].draw()
@@ -229,7 +235,7 @@ class MyOVBox(OVBox):
                         self.stopFlash(self.flash)
                         # Draw 
                         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT) # Set up background
-                        self.batch.draw() 
+                        #self.batch.draw() 
                         for r in range (0,len(self.matrix)):
                             for c in range(0, len(self.matrix[r])):
                                 self.matrix[r][c].draw()
@@ -246,12 +252,12 @@ class MyOVBox(OVBox):
                     elif (33031 <= stim.identifier and stim.identifier <= 33036): # Column
                         self.target[1] = stim.identifier
                         # Only draw target upon registering new column, so the pair will be complete
-                        self.drawTarget(self.target[0]-OVTK_StimulationId_Label_01, self.target[1]-OVTK_StimulationId_Label_07)
                         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT) # Set up background
-                        self.batch.draw() 
-                        for r in range (0,len(self.matrix)):
-                            for c in range(0, len(self.matrix[r])):
-                                self.matrix[r][c].draw()
+                        self.drawTarget(self.target[0]-OVTK_StimulationId_Label_01, self.target[1]-OVTK_StimulationId_Label_07)
+                        #self.batch.draw() 
+                        # for r in range (0,len(self.matrix)):
+                        #     for c in range(0, len(self.matrix[r])):
+                        #         self.matrix[r][c].draw()
                         self.win.flip()
                         #print("Target", self.target[0], " ", self.target[1])
 
