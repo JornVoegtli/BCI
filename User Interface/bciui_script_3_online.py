@@ -91,7 +91,7 @@ class MyOVBox(OVBox):
         # Called once when starting the scenario
         self.loopCounter = 0
         self.target = [0,0]
-        self.selection = [0,0]
+        self.selection = [33034,33034]
     	self.rowIndex = 0
     	self.colIndex = 0
         self.hashTable = {12:5,11:4,10:3,9:2,8:1,7:0,6:6,5:7,4:8,3:9,2:10,1:11}
@@ -215,7 +215,7 @@ class MyOVBox(OVBox):
             chunk = self.input[0].pop()
             if (type(chunk) == OVStimulationSet):
                 for stimIdx in range(len(chunk)):
-                    stim = chunk.pop(0)
+                    stim = chunk.pop(0) # OMGGGGGGG WHAT A CRAZY DETAIL JUN SHERN YOU'RE A GENIUS.
                     newStim = stim.identifier
                     # Aim row/column flash
                     if (33025 <= newStim and newStim <= 33036):
@@ -230,7 +230,7 @@ class MyOVBox(OVBox):
                             for c in range(0, len(self.matrix[r])):
                                 self.matrix[r][c].draw()
                         self.win.flip()
-                        pyglet.graphics.delete()
+                        #pyglet.graphics.delete()
                     # Stop flash
                     elif (newStim == 32780):
                         self.stopFlash(self.flash)
@@ -241,13 +241,13 @@ class MyOVBox(OVBox):
                             for c in range(0, len(self.matrix[r])):
                                 self.matrix[r][c].draw()
                         self.win.flip()
-    
+        """ 
         # Read target
         for chunkIndex in range( len(self.input[1]) ):
             chunk = self.input[1].pop()
             if(type(chunk) == OVStimulationSet):
                 for stimIdx in range(len(chunk)):
-                    stim = chunk.pop(0); # OMGGGGGGG WHAT A CRAZY DETAIL JUN SHERN YOU'RE A GENIUS.
+                    stim = chunk.pop(0); 
                     if (33025 <= stim.identifier and stim.identifier <= 33030): # Row
                         self.target[0] = stim.identifier
                     elif (33031 <= stim.identifier and stim.identifier <= 33036): # Column
@@ -261,7 +261,36 @@ class MyOVBox(OVBox):
                                 self.matrix[r][c].draw()
                         self.win.flip()
                         print("Target", self.target[0], " ", self.target[1])
-
+        """
+        # Read row selection
+        for chunkIndex in range( len(self.input[2]) ):
+            chunk = self.input[2].pop()
+            if(type(chunk) == OVStimulationSet):
+                for stimIdx in range(len(chunk)):
+                    stim=chunk.pop(0)
+                    if (33025 <= stim.identifier and stim.identifier <= 33030): # Row
+                        self.selection[0] = stim.identifier
+                        # Only draw target upon registering new ROW, so the pair will be complete - This is special! Column is received before row
+                        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT) # Set up background
+                        self.drawTarget(self.selection[0], self.selection[1]) # Drawing selection actually, but same la
+                        self.batch.draw() 
+                        for r in range (0,len(self.matrix)):
+                            for c in range(0, len(self.matrix[r])):
+                                self.matrix[r][c].draw()
+                        self.win.flip()
+                        print("Selection", self.selection)
+                        print("Row select", stim.identifier)
+        """
+        # Read column selection
+        for chunkIndex in range( len(self.input[3]) ):
+            chunk = self.input[3].pop()
+            if(type(chunk) == OVStimulationSet):
+                for stimIdx in range(len(chunk)):
+                    stim=chunk.pop(0);
+                    if (33031 <= stim.identifier and stim.identifier <= 33036): # Column
+                        self.selection[1] = stim.identifier
+                        print("Column select", stim.identifier)
+        """
         # """
         # if self.win.has_exit:
         #     self.endExperiment()
