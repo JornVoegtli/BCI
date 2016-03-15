@@ -230,6 +230,7 @@ class MyOVBox(OVBox):
                             for c in range(0, len(self.matrix[r])):
                                 self.matrix[r][c].draw()
                         self.win.flip()
+                        pyglet.graphics.delete()
                     # Stop flash
                     elif (newStim == 32780):
                         self.stopFlash(self.flash)
