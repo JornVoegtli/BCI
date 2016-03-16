@@ -307,7 +307,6 @@ class MyOVBox(OVBox):
         if (self.keys[key.P]):
             self.sendOutput(2, OVTK_StimulationId_Label_00)
 
-        """
         # Read flashes
         for chunkIndex in range( len(self.input[0]) ):
             chunk = self.input[0].pop()
@@ -339,7 +338,7 @@ class MyOVBox(OVBox):
                             for c in range(0, len(self.matrices[self.matIndex][r])):
                                 self.matrices[self.matIndex][r][c].draw()
                         self.win.flip()
-        
+        """
         # Read target
         for chunkIndex in range( len(self.input[1]) ):
             chunk = self.input[1].pop()
