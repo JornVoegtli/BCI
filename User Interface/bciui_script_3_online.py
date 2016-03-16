@@ -17,14 +17,6 @@ OVTK_StimulationId_Label_00 = 33024
 OVTK_StimulationId_Label_01 = 33025
 OVTK_StimulationId_Label_07 = 33031
 
-#keyboard text
-#text = [ ['A','B','C','D','E',u"\u2190"], 
-#                ['F','G','H','I','J','ENTER'], 
-#                ['K','L','M','N','O','abc'], 
-#                ['P','Q','R','S','T','123'], 
-#                ['U','V','W','X',u"\u25B2",'{&='], 
-#                ['Y','Z','SPACE',u"\u25C4",u"\u25BC", u"\u25BA"] ]
-
 textUC = [ ['PT1','PT2','PT3','A','B',u"\u2190"], 
                 ['C','D','E','F','G','ENTER'], 
                 ['H','I','J','K','L','123'], 
@@ -50,8 +42,6 @@ textNum = [ ['pt1','pt2','pt3','Email','WhatsApp',u"\u2190"],
 user32 = ctypes.windll.user32
 width = user32.GetSystemMetrics(0)
 height = user32.GetSystemMetrics(1)
-width = width
-height = height     
 ############################# CONTROLS #############################
 #P300 flash modes
 isEnlargeTextMode = True
@@ -64,7 +54,7 @@ isDrawTarget = True
 #target parameters
 targetSize = [width/6,height/12]
 #general UI display paramaters
-backgroundColour = [0,0,1,1]
+backgroundColour = [0,0,0.7,1]
 #highlight mode parameters
 targetColour = [0,1,0,1]
 vertFlashColour = [0,1,1,1]
@@ -72,7 +62,7 @@ vertFlashSize = [width/6,height/2]
 horizFlashColour = [0,1,1,1]
 horizFlashSize = [width,height/12]
 #text parameters
-keyboardFontSize = 36
+keyboardFontSize = 30
 keyboardFontColour = [230,230,230,255]
 keyboardEnlargeFontSize = 50
 keyboardEnlargeFontColour = [255,255,0,255]
@@ -129,8 +119,8 @@ class MyOVBox(OVBox):
             row = []
             for i in range(0, len(textUC[j]) ):
                 line = textUC[j][i]
-                ypos = keyboardPositionTop - (j)*(keyboardPositionTop/5)
-                xpos = i*width/6
+                ypos = keyboardPositionTop - (j)*(keyboardPositionTop/5) + keyboardPositionTop/60
+                xpos = i*width/6 + width/40
                 temp = pyglet.text.Label(line, 
                     font_name='Courier New',
                     font_size=keyboardFontSize,
@@ -146,7 +136,7 @@ class MyOVBox(OVBox):
             for i in range(0, len(textLC[j]) ):
                 line = textLC[j][i]
                 ypos = keyboardPositionTop - (j)*(keyboardPositionTop/5)
-                xpos = i*width/6
+                xpos = i*width/6 + width/40
                 temp = pyglet.text.Label(line, 
                     font_name='Courier New',
                     font_size=keyboardFontSize,
@@ -162,7 +152,7 @@ class MyOVBox(OVBox):
             for i in range(0, len(textNum[j]) ):
                 line = textNum[j][i]
                 ypos = keyboardPositionTop - (j)*(keyboardPositionTop/5)
-                xpos = i*width/6
+                xpos = i*width/6 + width/40
                 temp = pyglet.text.Label(line, 
                     font_name='Courier New',
                     font_size=keyboardFontSize,
@@ -176,6 +166,8 @@ class MyOVBox(OVBox):
         self.text = [textUC, textLC, textNum]
         # Choose initial matrix
         self.matIndex = matIndex
+        # Do first text prediction
+        self.updatePredictiveText()
 
         #set up window rendering
         self.win.dispatch_events()
@@ -238,9 +230,11 @@ class MyOVBox(OVBox):
 
     def updatePredictiveText(self):
         ## Predictive text
-        corrected_text = word_predictor.correct(self.current_text)
+        word = ((self.current_text).split(" "))[-1] # Get only last word
+        corrected_text = word_predictor.correct(word)
+
         ypos = keyboardPositionTop - (0)*(keyboardPositionTop/5)
-        xpos  = 0*width/6
+        xpos  = 0*width/6 + width/40
         temp0 = pyglet.text.Label(corrected_text[0], 
                 font_name='Courier New',
                 font_size=keyboardFontSize,
@@ -249,7 +243,7 @@ class MyOVBox(OVBox):
                 anchor_x='left', anchor_y='bottom')
        
         ypos = keyboardPositionTop - (0)*(keyboardPositionTop/5)
-        xpos  = 1*width/6
+        xpos  = 1*width/6 + width/40
         temp1 = pyglet.text.Label(corrected_text[1], 
                 font_name='Courier New',
                 font_size=keyboardFontSize,
@@ -258,16 +252,21 @@ class MyOVBox(OVBox):
                 anchor_x='left', anchor_y='bottom')
         
         ypos = keyboardPositionTop - (0)*(keyboardPositionTop/5)
-        xpos  = 2*width/6
+        xpos  = 2*width/6 + width/40
         temp2 = pyglet.text.Label(corrected_text[2], 
                 font_name='Courier New',
                 font_size=keyboardFontSize,
                 color=(keyboardFontColour[0],keyboardFontColour[1],keyboardFontColour[2],keyboardFontColour[3]),
                 x=xpos, y=ypos,
                 anchor_x='left', anchor_y='bottom')
-        self.matrices[self.matIndex][0][0] = temp0
-        self.matrices[self.matIndex][0][1] = temp1
-        self.matrices[self.matIndex][0][2] = temp2
+
+        for i in range(len(self.matrices)): # Need to update for all matrices
+            self.matrices[i][0][0] = temp0
+            self.matrices[i][0][1] = temp1
+            self.matrices[i][0][2] = temp2
+            self.text[i][0][0] = corrected_text[0]
+            self.text[i][0][1] = corrected_text[1]
+            self.text[i][0][2] = corrected_text[2]
         return
 
     def makeSelection(self, selection):
@@ -322,7 +321,7 @@ class MyOVBox(OVBox):
                         self.startFlash(self.flash)
                         # Draw 
                         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT) # Set up background
-                        #self.batch.draw() 
+                        self.batch.draw() 
                         for r in range (0,len(self.matrices[self.matIndex])):
                             for c in range(0, len(self.matrices[self.matIndex][r])):
                                 self.matrices[self.matIndex][r][c].draw()
@@ -333,7 +332,7 @@ class MyOVBox(OVBox):
                         self.stopFlash(self.flash)
                         # Draw 
                         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT) # Set up background
-                        #self.batch.draw() 
+                        self.batch.draw() 
                         for r in range (0,len(self.matrices[self.matIndex])):
                             for c in range(0, len(self.matrices[self.matIndex][r])):
                                 self.matrices[self.matIndex][r][c].draw()
