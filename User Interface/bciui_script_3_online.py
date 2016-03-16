@@ -116,18 +116,18 @@ class MyOVBox(OVBox):
         self.widget.caret.on_text(self.text_input)
         self.current_text = "" 
         if(upperCase):
-            text = textUC
+            self.text = textUC
         else:
-            text = textLC
+            self.text = textLC
         self.alphabet = "NEUROSPELL"
         self.numberalph = 0
 
         #set up user keyboard matrix
         self.matrix = []
-        for j in range(0, len(text) ):
+        for j in range(0, len(self.text) ):
             row = []
-            for i in range(0, len(text[j]) ):
-                line = text[j][i]
+            for i in range(0, len(self.text[j]) ):
+                line = self.text[j][i]
                 ypos = keyboardPositionTop - (j)*(keyboardPositionTop/5)
                 xpos = i*width/6
                 temp = pyglet.text.Label(line, 
@@ -197,6 +197,40 @@ class MyOVBox(OVBox):
                 self.matrix[r][c].font_size = keyboardFontSize
                 self.matrix[r][c].color = (keyboardFontColour[0],keyboardFontColour[1],keyboardFontColour[2],keyboardFontColour[3])
         return 
+
+    def updatePredictiveText(self):
+        ## Predictive text
+        corrected_text = word_predictor.correct(self.current_text)
+        ypos = keyboardPositionTop - (0)*(keyboardPositionTop/5)
+        xpos  = 0*width/6
+        temp0 = pyglet.text.Label(corrected_text[0], 
+                font_name='Courier New',
+                font_size=keyboardFontSize,
+                color=(keyboardFontColour[0],keyboardFontColour[1],keyboardFontColour[2],keyboardFontColour[3]),
+                x=xpos, y=ypos,
+                anchor_x='left', anchor_y='bottom')
+       
+        ypos = keyboardPositionTop - (0)*(keyboardPositionTop/5)
+        xpos  = 1*width/6
+        temp1 = pyglet.text.Label(corrected_text[1], 
+                font_name='Courier New',
+                font_size=keyboardFontSize,
+                color=(keyboardFontColour[0],keyboardFontColour[1],keyboardFontColour[2],keyboardFontColour[3]),
+                x=xpos, y=ypos,
+                anchor_x='left', anchor_y='bottom')
+        
+        ypos = keyboardPositionTop - (0)*(keyboardPositionTop/5)
+        xpos  = 2*width/6
+        temp2 = pyglet.text.Label(corrected_text[2], 
+                font_name='Courier New',
+                font_size=keyboardFontSize,
+                color=(keyboardFontColour[0],keyboardFontColour[1],keyboardFontColour[2],keyboardFontColour[3]),
+                x=xpos, y=ypos,
+                anchor_x='left', anchor_y='bottom')
+        self.matrix[0][0] = temp0
+        self.matrix[0][1] = temp1
+        self.matrix[0][2] = temp2
+        return
     
     def process(self): # Called on each box clock tick (this can be configured by right-clicking the box)
         self.win.dispatch_events()
@@ -210,6 +244,7 @@ class MyOVBox(OVBox):
         if (self.keys[key.P]):
             self.sendOutput(2, OVTK_StimulationId_Label_00)
 
+        """
         # Read flashes
         for chunkIndex in range( len(self.input[0]) ):
             chunk = self.input[0].pop()
@@ -241,7 +276,7 @@ class MyOVBox(OVBox):
                             for c in range(0, len(self.matrix[r])):
                                 self.matrix[r][c].draw()
                         self.win.flip()
-        """ 
+        
         # Read target
         for chunkIndex in range( len(self.input[1]) ):
             chunk = self.input[1].pop()
@@ -273,14 +308,20 @@ class MyOVBox(OVBox):
                         # Only draw target upon registering new ROW, so the pair will be complete - This is special! Column is received before row
                         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT) # Set up background
                         self.drawTarget(self.selection[0], self.selection[1]) # Drawing selection actually, but same la
+                        
+                        print("Selection", self.selection)
+                        self.text_input = self.text[self.selection[0]-33025][self.selection[1]-33031]
+                        print("Text selection:", self.text_input)
+                        self.current_text = self.current_text + self.text_input
+                        self.widget.caret.on_text(self.text_input)
+                        self.updatePredictiveText()
+
                         self.batch.draw() 
                         for r in range (0,len(self.matrix)):
                             for c in range(0, len(self.matrix[r])):
                                 self.matrix[r][c].draw()
                         self.win.flip()
-                        print("Selection", self.selection)
-                        print("Row select", stim.identifier)
-        """
+        
         # Read column selection
         for chunkIndex in range( len(self.input[3]) ):
             chunk = self.input[3].pop()
@@ -290,7 +331,9 @@ class MyOVBox(OVBox):
                     if (33031 <= stim.identifier and stim.identifier <= 33036): # Column
                         self.selection[1] = stim.identifier
                         print("Column select", stim.identifier)
-        """
+
+
+            
         # """
         # if self.win.has_exit:
         #     self.endExperiment()
