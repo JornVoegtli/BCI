@@ -1,3 +1,4 @@
+#c:/"program files (x86)"/openvibe/openvibe-designer
 from __future__ import division, print_function, unicode_literals
 import os, sys
 from pyglet.gl import *
@@ -5,64 +6,13 @@ from pyglet import *
 from pyglet.window import *
 import primitives
 import user_input
-import word_predictor
 import random
+from random import randint
 import string
 import ctypes
-from random import randint
-#c:/"program files (x86)"/openvibe/openvibe-designer
+from controls import *
 
-OVTK_StimulationId_Target = 33285
-OVTK_StimulationId_Label_00 = 33024
-OVTK_StimulationId_Label_01 = 33025
-OVTK_StimulationId_Label_07 = 33031
-
-# Keyboard matrix
-text = [ ['PT1','PT2','PT3','A','B',u"\u2190"], 
-                ['C','D','E','F','G','ENTER'], 
-                ['H','I','J','K','L','123'], 
-                ['M','N','O','P','Q','abc'], 
-                ['R','S','T','U','V',u"\u25C4"], 
-                ['W','X','Y','Z','SPACE',u"\u25BA"] ]
-
-# Get window parameters
-user32 = ctypes.windll.user32
-width = user32.GetSystemMetrics(0)
-height = user32.GetSystemMetrics(1)
-############################# CONTROLS #############################
-#P300 flash modes
-isEnlargeTextMode = True
-isHighlightTextMode = False
-#condition to draw flash
-isDrawVertFlash = True
-isDrawHorizFlash = True
-#condition to draw target
-isDrawTarget = True
-#target parameters
-targetSize = [width/6,height/12]
-#general UI display paramaters
-backgroundColour = [0,0,1,1] #1 corresponds to 255 last value is alpha
-#highlight mode parameters
-targetColour = [0,1,0,1]
-vertFlashColour = [0,1,1,1]
-vertFlashSize = [width/6,height/2]
-horizFlashColour = [0,1,1,1]
-horizFlashSize = [width,height/12]
-#text parameters
-keyboardFontSize = 36
-keyboardFontColour = [230,230,230,255]
-keyboardEnlargeFontSize = 50
-keyboardEnlargeFontColour = [255,255,0,255]
-#timing
-targetDelay = 30
-flashDuration = 200 # Loops
-#UIsuze
-UISize = 10
-#UIscaling based on UISize
-widgetPositionY = UISize*height/12
-widgetHeight = height-widgetPositionY
-keyboardPositionTop = widgetPositionY - height/12
-####################################################################
+text = textUC # Defined in controls.py
 
 class MyOVBox(OVBox):
     def __init__(self):
@@ -72,6 +22,7 @@ class MyOVBox(OVBox):
         # Called once when starting the scenario
         self.loopCounter = 0
         self.target = [0,0]
+        self.flash = 33000 # Arbitrary initial flash value - won't be seen
         self.hashTable = {12:5,11:4,10:3,9:2,8:1,7:0,6:6,5:7,4:8,3:9,2:10,1:11}
         # Read files into lists for flashes and targets, and convert strings to ints
         with open('dep_files/flash_stims.txt') as f:
@@ -110,7 +61,7 @@ class MyOVBox(OVBox):
             for i in range(0, len(text[j]) ):
                 line = text[j][i]
                 ypos = keyboardPositionTop - (j)*(keyboardPositionTop/5)
-                xpos = i*width/6
+                xpos = i*width/6 + width/40 
                 temp = pyglet.text.Label(line, 
                     font_name='Courier New',
                     font_size=keyboardFontSize,
@@ -125,19 +76,9 @@ class MyOVBox(OVBox):
         self.win.flip()
         return
 
-    def predictText(string):
-        words = string.split(' ')
-        if len(words[-1]) > 0: 
-            w1 = word_predictor.correct(words[-1])
-            w2 = words[-1] + 'ing'
-            w3 = words[-1] + 'ed'
-        else:
-            rick = "never gonna give" # you up
-            [w1,w2,w3] = rick.split(' ')
-        return [w1, w2, w3]
-
     def endExperiment(self):
         print("Quitting experiment.")
+        self.sendOutput(0, 32770) # Experiment STOP
         self.closeOutputs()
         self.win.close()
         return 
@@ -220,6 +161,7 @@ class MyOVBox(OVBox):
                     self.getNextTarget()
                     self.sendOutput(2, self.target[0])
                     self.sendOutput(2, self.target[1])
+                self.stopFlash(self.flash)
                 self.drawTarget(self.target[0], self.target[1])
 
             # Flash for the next (flashDuration) loops

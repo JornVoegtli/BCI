@@ -13,7 +13,6 @@ from pyglet.window import mouse
 from pyglet.window import event
 from pyglet.window import key
 
-
 class Base(object):
     """
     Basic attributes of all drawing primitives
