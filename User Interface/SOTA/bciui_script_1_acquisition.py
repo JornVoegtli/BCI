@@ -4,15 +4,11 @@ import os, sys
 from pyglet.gl import *
 from pyglet import *
 from pyglet.window import *
-import primitives
-import user_input
 import random
-from random import randint
 import string
 import ctypes
 from controls import *
-
-text = textUC # Defined in controls.py
+import display
 
 class MyOVBox(OVBox):
     def __init__(self):
@@ -20,12 +16,10 @@ class MyOVBox(OVBox):
             
     def initialize(self): 
     # Called once when starting the scenario
-        self.imageLoad = [pyglet.image.load('img/Vinay.jpg'), 
-                pyglet.image.load('img/Sam.jpg'), 
-                pyglet.image.load('img/Jorn.jpg'),
-                pyglet.image.load('img/Jun.jpg'),
-                pyglet.image.load('img/Nico.jpg'),
-                pyglet.image.load('img/javi.jpg')]
+        # Display class
+        self.disp = display.MyPyglet()
+
+        # Operation variables
         self.loopCounter = 0
         self.target = [0,0]
         self.flash = 0 # Arbitrary initial flash value - won't be seen
@@ -41,58 +35,13 @@ class MyOVBox(OVBox):
 
         # I/O
         self.initOutputs() # Set output stimulation headers
-
-        # Pyglet
-        #create window
-        self.win = window.Window(fullscreen = True)
-        
-        #colour background and set up openGL rendering
-        glClearColor(backgroundColour[0], backgroundColour[1], backgroundColour[2], backgroundColour[3])
-        glEnable(GL_BLEND)
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
-        
-        #set up keyboard input
-        self.keys = key.KeyStateHandler()
-        self.win.push_handlers(self.keys)
-        
-        #set up user input text display
-        self.batch = pyglet.graphics.Batch()
-        self.widget = user_input.TextWidget('', 0, int(widgetPositionY), int(width),int(widgetHeight), self.batch)
-        self.text_input = ""
-        self.widget.caret.on_text(self.text_input)
-        
-        #set up user keyboard matrix
-        self.matrix = []
-        for j in range(0, len(text) ):
-            row = []
-            for i in range(0, len(text[j]) ):
-                line = text[j][i]
-                ypos = keyboardPositionTop - (j)*(keyboardPositionTop/5)
-                xpos = i*width/6 + width/40 
-                temp = pyglet.text.Label(line, 
-                    font_name='Courier New',
-                    font_size=keyboardFontSize,
-                    color=(keyboardFontColour[0],keyboardFontColour[1],keyboardFontColour[2],keyboardFontColour[3]),
-                    x=xpos, y=ypos,
-                    anchor_x='left', anchor_y='bottom')
-                row.append(temp)
-            self.matrix.append(row)
-
-        #set up window rendering
-        self.win.dispatch_events()
-        self.win.flip()
-
-        # More flash settings
-        if isCrazyKeyboardEnlargeColour:
-            self.generateRandomColour()
-            keyboardEnlargeFontColour = self.colourCrazy
         return
 
     def endExperiment(self):
         print("Quitting experiment.")
         self.sendOutput(1, 32770) # Experiment STOP 
         self.closeOutputs()
-        self.win.close()
+        self.disp.win.close()
         return 
 
     def readFlash(self):
@@ -112,172 +61,21 @@ class MyOVBox(OVBox):
             self.target[1] = self.targets.pop(0)
         return 
 
-    def drawTarget(self, rowStim, colStim):
-        if (isDrawTarget):
-            rowNum = rowStim - OVTK_StimulationId_Label_01
-            colNum = colStim - OVTK_StimulationId_Label_07
-            x = colNum * width / 6
-            y = (5-rowNum) * (keyboardPositionTop/5)
-            primitives.drawRect(x, y, targetSize[0], targetSize[1], targetColour[0],targetColour[1],targetColour[2],targetColour[3])
-        return
-
-    def generateRandomColour(self,saturation=1,lightness=0.5):
-        hue = randint(0,360)
-        while hue > 120 and hue <290:
-            hue = randint(0,360)
-
-        chroma = 1 - abs(2*lightness-1)*saturation
-        huePrime = hue/60
-        intermediateValue = chroma*(1-abs(huePrime%2-1))
-        red = 0
-        blue = 0
-        green = 0
-        if huePrime < 1:
-            red = chroma
-            blue = intermediateValue
-            green = 0
-        elif huePrime < 2:
-            red = intermediateValue
-            blue = chroma
-            green = 0
-        elif huePrime < 3:
-            red = 0
-            blue = chroma
-            green = intermediateValue
-        elif huePrime < 4:
-            red = 0
-            blue = intermediateValue
-            green = chroma
-        elif huePrime < 5:
-            red = intermediateValue
-            blue = 0
-            green = chroma
-        elif huePrime < 6:
-            red = chroma
-            blue = 0
-            green = intermediateValue
-        m = lightness - 0.5*chroma
-        red = (red+m)
-        blue = (blue+m)
-        green = (green+m)
-        self.colourCrazyNormalized = (red,blue,green,1)
-        self.colourCrazy = (int(red*255),int(blue*255),int(green*255),255)
-        return 
-
-    def startFlash(self, rowcol):
-        # If column
-        if (rowcol <= 5 and isDrawVertFlash):
-            if (isEnlargeTextMode):
-                c = rowcol
-                for r in range(0, len(self.matrix)):
-                    self.matrix[r][c].font_size = keyboardEnlargeFontSize
-                    self.matrix[r][c].color = (keyboardEnlargeFontColour[0],keyboardEnlargeFontColour[1],keyboardEnlargeFontColour[2],keyboardEnlargeFontColour[3])
-                    self.matrix[r][c].bold = True
-            if (isHighlightTextMode):
-                if(isCrazyHighlightTextMode):
-                    self.generateRandomColour()
-                    vertFlashColour = self.colourCrazyNormalized
-                    self.generateRandomColour()
-                    horizFlashColour = self.colourCrazyNormalized
-                else:
-                    vertFlashColour = vertFlashColourDefault
-                    horizFlashColour = horizFlashColourDefault
-                primitives.drawRect(rowcol*width/6, 0, vertFlashSize[0], vertFlashSize[1], vertFlashColour[0],vertFlashColour[1],vertFlashColour[2],vertFlashColour[3])
-        # If row
-        elif (rowcol <= 11 and isDrawHorizFlash):
-            if (isEnlargeTextMode):
-                r = rowcol%6
-                for c in range(0, len(self.matrix[r])):
-                    self.matrix[r][c].font_size = keyboardEnlargeFontSize
-                    self.matrix[r][c].color = (keyboardEnlargeFontColour[0],keyboardEnlargeFontColour[1],keyboardEnlargeFontColour[2],keyboardEnlargeFontColour[3])
-                    self.matrix[r][c].bold = True
-            if (isHighlightTextMode):
-                if(isCrazyHighlightTextMode):
-                    self.generateRandomColour()
-                    vertFlashColour = self.colourCrazyNormalized
-                    self.generateRandomColour()
-                    horizFlashColour = self.colourCrazyNormalized
-                else:
-                    vertFlashColour = vertFlashColourDefault
-                    horizFlashColour = horizFlashColourDefault
-                primitives.drawRect(0, rowcol%6*height/12, horizFlashSize[0], horizFlashSize[1], horizFlashColour[0], horizFlashColour[1], horizFlashColour[2], horizFlashColour[3])
-        if(isDrawCircleMode):
-            self.drawCircle(rowcol)
-        if(isDrawImageMode):
-            self.drawImage(rowcol)
-        return
-
-    def drawCircle(self, rowcol):
-        if(isCrazyDrawCircleMode):
-            self.generateRandomColour()
-            circleColourVert = self.colourCrazyNormalized
-            self.generateRandomColour()
-            circleColourHoriz = self.colourCrazyNormalized
-        else:
-            circleColourHoriz = circleColourDefault
-            circleColourVert = circleColourDefault
-        if (rowcol < 6 and isDrawVertCircle):
-            for j in range (0,6):
-                ypos  = j*(keyboardPositionTop)/5 + circleRadius/4
-                xpos  = rowcol*width/6 + circleRadius/4
-                primitives.drawCircle(xpos,ypos,circleRadius,circleColourVert[0],circleColourVert[1],circleColourVert[2],circleColourVert[3])
-        elif(rowcol < 12 and isDrawHorizCircle):
-            for j in range (0,6):
-                ypos  = rowcol%6*(keyboardPositionTop)/5 + circleRadius/4
-                xpos  = j*width/6 + circleRadius/4
-                primitives.drawCircle(xpos,ypos,circleRadius,circleColourHoriz[0],circleColourHoriz[1],circleColourHoriz[2],circleColourHoriz[3])        
-        return
-
-    def drawImage(self, rowcol):
-        if(isDrawImageMode):
-            if(rowcol<6 and isDrawVertImage):
-                for j in range(0,6):
-                    ypos  = j*(keyboardPositionTop)/5
-                    xpos  = rowcol*width/6
-                    self.imageLoad[randint(0,5)].blit(xpos,ypos,width=imageWidth,height=imageHeight)
-            elif(rowcol < 12 and isDrawHorizCircle):
-                for j in range (0,6):
-                    ypos  = rowcol%6*(keyboardPositionTop)/5
-                    xpos  = j*width/6
-                    self.imageLoad[randint(0,5)].blit(xpos,ypos,width=imageWidth,height=imageHeight)
-        return
-
-    def stopFlash(self, rowcol):
-        if (isEnlargeTextMode == False): 
-            return # No need to stopFlash if text is not enlarged
-
-        # If column
-        if (rowcol <= 5 and isDrawVertFlash):
-            c = rowcol
-            for r in range(0, len(self.matrix)):
-                self.matrix[r][c].font_size = keyboardFontSize
-                self.matrix[r][c].color = (keyboardFontColour[0],keyboardFontColour[1],keyboardFontColour[2],keyboardFontColour[3])
-                self.matrix[r][c].bold = False
-        # If row
-        elif (rowcol <= 11 and isDrawHorizFlash):
-            r = rowcol%6
-            for c in range(0, len(self.matrix[r])):
-                self.matrix[r][c].font_size = keyboardFontSize
-                self.matrix[r][c].color = (keyboardFontColour[0],keyboardFontColour[1],keyboardFontColour[2],keyboardFontColour[3])
-                self.matrix[r][c].bold = False
-        return 
-
-
     def process(self): # Called on each box clock tick (this can be configured by right-clicking the box)
-        self.win.dispatch_events()
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT) # Set up background
+        self.disp.win.dispatch_events()
 
-        if self.win.has_exit:
+        if self.disp.win.has_exit:
             self.endExperiment()
         else:
+            self.disp.clear()
             # Show a target for the first target
             if (self.loopCounter <= targetDelay):
                 if (self.loopCounter == 0):
                     self.getNextTarget()
                     self.sendOutput(2, self.target[0])
                     self.sendOutput(2, self.target[1])
-                self.stopFlash(self.flash)
-                self.drawTarget(self.target[0], self.target[1])
+                self.disp.stopFlash(self.flash)
+                self.disp.drawTarget(self.target[0], self.target[1])
 
             # Flash for the next (flashDuration) loops
             elif (self.loopCounter <= targetDelay + flashDuration):
@@ -287,10 +85,10 @@ class MyOVBox(OVBox):
                     self.flash = self.hashTable[newStim - OVTK_StimulationId_Label_00]
                 # Start flash
                 elif (newStim == 32779): 
-                    self.startFlash(self.flash)
+                    self.disp.startFlash(self.flash)
                 # Stop flash
                 elif (newStim == 32780):
-                    self.stopFlash(self.flash)
+                    self.disp.stopFlash(self.flash)
 
                 self.sendOutput(1, newStim)
                 # Reset counter on last loop
@@ -298,14 +96,12 @@ class MyOVBox(OVBox):
                     self.loopCounter = -1
 
             # Draw keyboard matrix
-            for r in range (0,len(self.matrix)):
-                for c in range(0, len(self.matrix[r])):
-                    self.matrix[r][c].draw()
+            for r in range (0,len(self.disp.matrix)):
+                for c in range(0, len(self.disp.matrix[r])):
+                    self.disp.matrix[r][c].draw()
             
-            # Pyglet/GL updates        
-            self.batch.draw() 
-            self.win.flip()
-
+            self.disp.batch.draw() 
+            self.disp.win.flip()
             self.loopCounter += 1
         return
 
