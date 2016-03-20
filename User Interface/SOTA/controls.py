@@ -8,11 +8,11 @@ height = user32.GetSystemMetrics(1)
 
 ############################# CONTROLS #############################
 #P300 flash modes
-isEnlargeTextMode = False
-isHighlightTextMode = False
+isEnlargeTextMode = True
+isHighlightTextMode = True
 isDrawCircleMode = True
-isCrazyKeyboardEnlargeColour = True
-isCrazyHighlightTextMode = True
+isCrazyKeyboardEnlargeColour = False
+isCrazyHighlightTextMode = False
 isCrazyDrawCircleMode = True
 isDrawImageMode = True
 #image mode parameters
@@ -27,8 +27,8 @@ isDrawHorizCircle = True
 circleRadius = 10
 circleColourDefault = [1,0,1,1]
 #condition to draw flash
-isDrawVertFlash = True
-isDrawHorizFlash = True
+isDrawVertFlash = False
+isDrawHorizFlash = False
 #condition to draw target
 isDrawTarget = True
 #target parameters
@@ -40,6 +40,7 @@ keyboardFontSize = 36
 keyboardFontColour = [230,230,230,255]
 keyboardEnlargeFontSize = 50
 keyboardEnlargeFontColourDefault = (255,0,255,255) #default
+keyboardEnlargeFontColour = keyboardEnlargeFontColourDefault
 #timing
 targetDelay = 30
 flashDuration = 200

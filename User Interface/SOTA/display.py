@@ -10,7 +10,12 @@ text = textUC # Defined in controls.py
 
 class MyPyglet():
     def __init__(self):
-        self.imageLoad = [pyglet.image.load('img/Vinay.jpg'), pyglet.image.load('img/Sam.jpg'), pyglet.image.load('img/Jorn.jpg'), pyglet.image.load('img/Jun.jpg'), pyglet.image.load('img/Nico.jpg'), pyglet.image.load('img/javi.jpg')]
+        self.imageLoad = [pyglet.image.load('img/Vinay.jpg'), 
+            pyglet.image.load('img/Sam.jpg'), 
+            pyglet.image.load('img/Jorn.jpg'), 
+            pyglet.image.load('img/Jun.jpg'), 
+            pyglet.image.load('img/Nico.jpg'), 
+            pyglet.image.load('img/javi.jpg')]
         # Pyglet
         #create window
         self.win = window.Window(fullscreen = True)
@@ -45,7 +50,6 @@ class MyPyglet():
         #set up window rendering
         self.win.dispatch_events()
         self.win.flip()
-
 
         # More flash settings
         if isCrazyKeyboardEnlargeColour:
@@ -203,6 +207,12 @@ class MyPyglet():
                 self.matrix[r][c].bold = False
         return 
 
+    def drawMatrix(self):
+        # Draw keyboard matrix
+        for r in range (0,len(self.matrix)):
+            for c in range(0, len(self.matrix[r])):
+                self.matrix[r][c].draw()
+        
     def update(self):
         self.disp.batch.draw() 
         self.disp.win.flip()
