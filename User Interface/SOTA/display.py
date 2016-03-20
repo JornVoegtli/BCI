@@ -106,15 +106,20 @@ class MyPyglet():
         return 
 
     def startFlash(self, rowcol):
-        # If column
-        if (rowcol <= 5 and isDrawVertFlash):
-            if (isEnlargeTextMode):
-                c = rowcol
-                for r in range(0, len(self.matrix)):
-                    self.matrix[r][c].font_size = keyboardEnlargeFontSize
-                    self.matrix[r][c].color = (keyboardEnlargeFontColour[0],keyboardEnlargeFontColour[1],keyboardEnlargeFontColour[2],keyboardEnlargeFontColour[3])
-                    self.matrix[r][c].bold = True
-            if (isHighlightTextMode):
+        if(isEnlargeTextMode):
+            self.drawEnlargeText(rowcol)
+        if(isHighlightTextMode):
+            self.drawHighlightText(rowcol)
+        if(isDrawCircleMode):
+            self.drawCircle(rowcol)
+        if(isDrawImageMode):
+            self.drawImage(rowcol)
+        if(isDrawTriMode):
+            self.drawTri(rowcol)
+        return
+    def drawHighlightText(self,rowcol):
+        if (isHighlightTextMode):
+            if (rowcol <= 5 and isDrawVertFlash):
                 if(isCrazyHighlightTextMode):
                     self.generateRandomColour()
                     vertFlashColour = self.colourCrazyNormalized
@@ -124,28 +129,64 @@ class MyPyglet():
                     vertFlashColour = vertFlashColourDefault
                     horizFlashColour = horizFlashColourDefault
                 primitives.drawRect(rowcol*width/6, 0, vertFlashSize[0], vertFlashSize[1], vertFlashColour[0],vertFlashColour[1],vertFlashColour[2],vertFlashColour[3])
-        # If row
-        elif (rowcol <= 11 and isDrawHorizFlash):
-            if (isEnlargeTextMode):
+            elif (rowcol <= 11 and isDrawHorizFlash):
+                if (isHighlightTextMode):
+                    if(isCrazyHighlightTextMode):
+                        self.generateRandomColour()
+                        vertFlashColour = self.colourCrazyNormalized
+                        self.generateRandomColour()
+                        horizFlashColour = self.colourCrazyNormalized
+                    else:
+                        vertFlashColour = vertFlashColourDefault
+                        horizFlashColour = horizFlashColourDefault
+                    primitives.drawRect(0, rowcol%6*keyboardPositionTop/5, horizFlashSize[0], horizFlashSize[1], horizFlashColour[0], horizFlashColour[1], horizFlashColour[2], horizFlashColour[3])
+        return
+    def drawEnlargeText(self,rowcol):
+        if (isEnlargeTextMode):     
+            if (rowcol <= 5 and isDrawVertEnlarge):
+                if isCrazyKeyboardEnlargeColour:
+                    self.generateRandomColour()
+                    keyboardEnlargeFontColour = self.colourCrazy
+                else:
+                    keyboardEnlargeFontColour = keyboardEnlargeFontColourDefault  
+                c = rowcol
+                for r in range(0, len(self.matrix)):
+                    self.matrix[r][c].font_size = keyboardEnlargeFontSize
+                    self.matrix[r][c].color = (keyboardEnlargeFontColour[0],keyboardEnlargeFontColour[1],keyboardEnlargeFontColour[2],keyboardEnlargeFontColour[3])
+                    self.matrix[r][c].bold = True
+            elif (rowcol <= 11 and isDrawHorizEnlarge):
+                if isCrazyKeyboardEnlargeColour:
+                    self.generateRandomColour()
+                    keyboardEnlargeFontColour = self.colourCrazy
+                else:
+                    keyboardEnlargeFontColour = keyboardEnlargeFontColourDefault  
                 r = rowcol%6
                 for c in range(0, len(self.matrix[r])):
                     self.matrix[r][c].font_size = keyboardEnlargeFontSize
                     self.matrix[r][c].color = (keyboardEnlargeFontColour[0],keyboardEnlargeFontColour[1],keyboardEnlargeFontColour[2],keyboardEnlargeFontColour[3])
                     self.matrix[r][c].bold = True
-            if (isHighlightTextMode):
-                if(isCrazyHighlightTextMode):
-                    self.generateRandomColour()
-                    vertFlashColour = self.colourCrazyNormalized
-                    self.generateRandomColour()
-                    horizFlashColour = self.colourCrazyNormalized
-                else:
-                    vertFlashColour = vertFlashColourDefault
-                    horizFlashColour = horizFlashColourDefault
-                primitives.drawRect(0, rowcol%6*height/12, horizFlashSize[0], horizFlashSize[1], horizFlashColour[0], horizFlashColour[1], horizFlashColour[2], horizFlashColour[3])
-        if(isDrawCircleMode):
-            self.drawCircle(rowcol)
-        if(isDrawImageMode):
-            self.drawImage(rowcol)
+        return
+
+    def drawTri(self,rowcol):
+        if(isDrawTriMode):
+            if(isCrazyDrawTriMode):
+                self.generateRandomColour()
+                triColourVert = self.colourCrazyNormalized
+                self.generateRandomColour()
+                triColourHoriz = self.colourCrazyNormalized
+            else:
+                triColourHoriz = triColourDefault
+                triColourVert = triColourDefault
+            if (rowcol < 6 and isDrawVertTri):
+                for j in range (0,6):
+                    ypos  = j*(keyboardPositionTop)/5
+                    xpos  = rowcol*width/6 
+                    primitives.drawTri(xpos,ypos,triWidth,triHeight,triColourVert[0],triColourVert[1],triColourVert[2],triColourVert[3])
+            elif(rowcol < 12 and isDrawHorizTri):
+                for j in range (0,6):
+                    ypos  = rowcol%6*(keyboardPositionTop)/5
+                    xpos  = j*width/6
+                    primitives.drawTri(xpos,ypos,triWidth,triHeight,triColourHoriz[0],triColourHoriz[1],triColourHoriz[2],triColourHoriz[3])                
         return
 
     def drawCircle(self, rowcol):
@@ -176,7 +217,7 @@ class MyPyglet():
                     ypos  = j*(keyboardPositionTop)/5
                     xpos  = rowcol*width/6
                     self.imageLoad[randint(0,5)].blit(xpos,ypos,width=imageWidth,height=imageHeight)
-            elif(rowcol < 12 and isDrawHorizCircle):
+            elif(rowcol < 12 and isDrawHorizImage):
                 for j in range (0,6):
                     ypos  = rowcol%6*(keyboardPositionTop)/5
                     xpos  = j*width/6

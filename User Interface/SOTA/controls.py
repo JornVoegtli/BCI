@@ -7,55 +7,64 @@ width = user32.GetSystemMetrics(0)
 height = user32.GetSystemMetrics(1)
 
 ############################# CONTROLS #############################
-#P300 flash modes
-isEnlargeTextMode = False
-isHighlightTextMode = False
-isDrawCircleMode = True
-isCrazyKeyboardEnlargeColour = True
-isCrazyHighlightTextMode = True
-isCrazyDrawCircleMode = True
-isDrawImageMode = True
-#image mode parameters
-imageWidth = 100
-imageHeight = 100
-#condition to draw image
-isDrawVertImage = True
-#condition to draw circle
-isDrawVertCircle = True
-isDrawHorizCircle = True
-#circle mode parameters
-circleRadius = 10
-circleColourDefault = [1,0,1,1]
-#condition to draw flash
-isDrawVertFlash = True
-isDrawHorizFlash = True
-#condition to draw target
-isDrawTarget = True
-#target parameters
-targetSize = [width/6,height/12]
-#general UI display paramaters
-backgroundColour = [0,0,1,1] #1 corresponds to 255 last value is alpha
-#text parameters
-keyboardFontSize = 36
-keyboardFontColour = [230,230,230,255]
-keyboardEnlargeFontSize = 50
-keyboardEnlargeFontColourDefault = (255,0,255,255) #default
-#timing
-targetDelay = 30
-flashDuration = 200
-#UIsuze
+#UIsize
 UISize = 10
 #UIscaling based on UISize
 widgetPositionY = UISize*height/12
 widgetHeight = height-widgetPositionY
 keyboardPositionTop = widgetPositionY - height/12
-#highlight mode parameters
-targetFontColour = [255,0,255,255]
-targetColour = [0,1,0,1]
+#FLASHING MODES
+isDrawCircleMode = True
+isHighlightTextMode = True
+isDrawTriMode = True
+isDrawImageMode = True
+isEnlargeTextMode = False
+#CRAZY FLASHING MODES
+isCrazyDrawCircleMode = True
+isCrazyHighlightTextMode = True
+isCrazyKeyboardEnlargeColour = True
+#CIRCLE MODE
+isDrawVertCircle = True
+isDrawHorizCircle = True
+circleRadius = 10
+circleColourDefault = [1,0,1,1]
+#HIGHLIGHT MODE
+isDrawVertFlash = True
+isDrawHorizFlash = True
 vertFlashColourDefault = [0,1,1,1]
 vertFlashSize = [width/6,height]
 horizFlashColourDefault = [0,1,1,1]
 horizFlashSize = [width,keyboardPositionTop/12]
+#ENLARGE TEXT MODE
+isDrawHorizEnlarge = True
+isDrawVertEnlarge = True
+keyboardEnlargeFontSize = 50
+keyboardEnlargeFontColourDefault = (255,0,255,255) #default
+#TRIANGLE MODE
+isCrazyDrawTriMode = True
+isDrawVertTri = True
+isDrawHorizTri = True
+triColourDefault = [1,1,0,1]
+triHeight = 87
+triWidth = 100
+#IMAGE MODE
+isDrawVertImage = True
+isDrawHorizImage = True
+imageWidth = 100
+imageHeight = 100
+#TARGET
+isDrawTarget = True
+targetSize = [width/6,height/12]
+targetFontColour = [255,0,255,255]
+targetColour = [0,1,0,1]
+#general UI display paramaters
+backgroundColour = [0,0,1,1] #1 corresponds to 255 last value is alpha
+#text parameters
+keyboardFontSize = 36
+keyboardFontColour = [230,230,230,255]
+#timing
+targetDelay = 30
+flashDuration = 200
 # Initial matrix choice
 matIndex = 0
 ####################################################################

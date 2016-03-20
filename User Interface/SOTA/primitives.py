@@ -427,3 +427,7 @@ def drawRect(x, y, width, height,color_r,color_g,color_b,color_a):
 def drawCircle(x, y, radius,color_r,color_g,color_b,color_a):
     c = Circle(x,y,width=radius,color=(color_r,color_g,color_b,color_a))
     c.render()
+
+def drawTri(x, y, width, height,color_r,color_g,color_b,color_a):
+    T = Polygon([(x, y),(x + width/2,y+height),(x+width,y)],color=(color_r,color_g,color_b,color_a))
+    T.render()
