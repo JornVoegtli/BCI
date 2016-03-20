@@ -19,11 +19,18 @@ class MyOVBox(OVBox):
         OVBox.__init__(self)
             
     def initialize(self): 
-        # Called once when starting the scenario
+    # Called once when starting the scenario
+        self.imageLoad = [pyglet.image.load('img/Vinay.jpg'), 
+                pyglet.image.load('img/Sam.jpg'), 
+                pyglet.image.load('img/Jorn.jpg'),
+                pyglet.image.load('img/Jun.jpg'),
+                pyglet.image.load('img/Nico.jpg'),
+                pyglet.image.load('img/javi.jpg')]
         self.loopCounter = 0
         self.target = [0,0]
-        self.flash = 33000 # Arbitrary initial flash value - won't be seen
+        self.flash = 0 # Arbitrary initial flash value - won't be seen
         self.hashTable = {12:5,11:4,10:3,9:2,8:1,7:0,6:6,5:7,4:8,3:9,2:10,1:11}
+
         # Read files into lists for flashes and targets, and convert strings to ints
         with open('dep_files/flash_stims.txt') as f:
             self.flashes = f.read().splitlines()
@@ -74,11 +81,16 @@ class MyOVBox(OVBox):
         #set up window rendering
         self.win.dispatch_events()
         self.win.flip()
+
+        # More flash settings
+        if isCrazyKeyboardEnlargeColour:
+            self.generateRandomColour()
+            keyboardEnlargeFontColour = self.colourCrazy
         return
 
     def endExperiment(self):
         print("Quitting experiment.")
-        self.sendOutput(0, 32770) # Experiment STOP
+        self.sendOutput(1, 32770) # Experiment STOP 
         self.closeOutputs()
         self.win.close()
         return 
@@ -109,6 +121,49 @@ class MyOVBox(OVBox):
             primitives.drawRect(x, y, targetSize[0], targetSize[1], targetColour[0],targetColour[1],targetColour[2],targetColour[3])
         return
 
+    def generateRandomColour(self,saturation=1,lightness=0.5):
+        hue = randint(0,360)
+        while hue > 120 and hue <290:
+            hue = randint(0,360)
+
+        chroma = 1 - abs(2*lightness-1)*saturation
+        huePrime = hue/60
+        intermediateValue = chroma*(1-abs(huePrime%2-1))
+        red = 0
+        blue = 0
+        green = 0
+        if huePrime < 1:
+            red = chroma
+            blue = intermediateValue
+            green = 0
+        elif huePrime < 2:
+            red = intermediateValue
+            blue = chroma
+            green = 0
+        elif huePrime < 3:
+            red = 0
+            blue = chroma
+            green = intermediateValue
+        elif huePrime < 4:
+            red = 0
+            blue = intermediateValue
+            green = chroma
+        elif huePrime < 5:
+            red = intermediateValue
+            blue = 0
+            green = chroma
+        elif huePrime < 6:
+            red = chroma
+            blue = 0
+            green = intermediateValue
+        m = lightness - 0.5*chroma
+        red = (red+m)
+        blue = (blue+m)
+        green = (green+m)
+        self.colourCrazyNormalized = (red,blue,green,1)
+        self.colourCrazy = (int(red*255),int(blue*255),int(green*255),255)
+        return 
+
     def startFlash(self, rowcol):
         # If column
         if (rowcol <= 5 and isDrawVertFlash):
@@ -117,7 +172,16 @@ class MyOVBox(OVBox):
                 for r in range(0, len(self.matrix)):
                     self.matrix[r][c].font_size = keyboardEnlargeFontSize
                     self.matrix[r][c].color = (keyboardEnlargeFontColour[0],keyboardEnlargeFontColour[1],keyboardEnlargeFontColour[2],keyboardEnlargeFontColour[3])
+                    self.matrix[r][c].bold = True
             if (isHighlightTextMode):
+                if(isCrazyHighlightTextMode):
+                    self.generateRandomColour()
+                    vertFlashColour = self.colourCrazyNormalized
+                    self.generateRandomColour()
+                    horizFlashColour = self.colourCrazyNormalized
+                else:
+                    vertFlashColour = vertFlashColourDefault
+                    horizFlashColour = horizFlashColourDefault
                 primitives.drawRect(rowcol*width/6, 0, vertFlashSize[0], vertFlashSize[1], vertFlashColour[0],vertFlashColour[1],vertFlashColour[2],vertFlashColour[3])
         # If row
         elif (rowcol <= 11 and isDrawHorizFlash):
@@ -126,8 +190,56 @@ class MyOVBox(OVBox):
                 for c in range(0, len(self.matrix[r])):
                     self.matrix[r][c].font_size = keyboardEnlargeFontSize
                     self.matrix[r][c].color = (keyboardEnlargeFontColour[0],keyboardEnlargeFontColour[1],keyboardEnlargeFontColour[2],keyboardEnlargeFontColour[3])
+                    self.matrix[r][c].bold = True
             if (isHighlightTextMode):
+                if(isCrazyHighlightTextMode):
+                    self.generateRandomColour()
+                    vertFlashColour = self.colourCrazyNormalized
+                    self.generateRandomColour()
+                    horizFlashColour = self.colourCrazyNormalized
+                else:
+                    vertFlashColour = vertFlashColourDefault
+                    horizFlashColour = horizFlashColourDefault
                 primitives.drawRect(0, rowcol%6*height/12, horizFlashSize[0], horizFlashSize[1], horizFlashColour[0], horizFlashColour[1], horizFlashColour[2], horizFlashColour[3])
+        if(isDrawCircleMode):
+            self.drawCircle(rowcol)
+        if(isDrawImageMode):
+            self.drawImage(rowcol)
+        return
+
+    def drawCircle(self, rowcol):
+        if(isCrazyDrawCircleMode):
+            self.generateRandomColour()
+            circleColourVert = self.colourCrazyNormalized
+            self.generateRandomColour()
+            circleColourHoriz = self.colourCrazyNormalized
+        else:
+            circleColourHoriz = circleColourDefault
+            circleColourVert = circleColourDefault
+        if (rowcol < 6 and isDrawVertCircle):
+            for j in range (0,6):
+                ypos  = j*(keyboardPositionTop)/5 + circleRadius/4
+                xpos  = rowcol*width/6 + circleRadius/4
+                primitives.drawCircle(xpos,ypos,circleRadius,circleColourVert[0],circleColourVert[1],circleColourVert[2],circleColourVert[3])
+        elif(rowcol < 12 and isDrawHorizCircle):
+            for j in range (0,6):
+                ypos  = rowcol%6*(keyboardPositionTop)/5 + circleRadius/4
+                xpos  = j*width/6 + circleRadius/4
+                primitives.drawCircle(xpos,ypos,circleRadius,circleColourHoriz[0],circleColourHoriz[1],circleColourHoriz[2],circleColourHoriz[3])        
+        return
+
+    def drawImage(self, rowcol):
+        if(isDrawImageMode):
+            if(rowcol<6 and isDrawVertImage):
+                for j in range(0,6):
+                    ypos  = j*(keyboardPositionTop)/5
+                    xpos  = rowcol*width/6
+                    self.imageLoad[randint(0,5)].blit(xpos,ypos,width=imageWidth,height=imageHeight)
+            elif(rowcol < 12 and isDrawHorizCircle):
+                for j in range (0,6):
+                    ypos  = rowcol%6*(keyboardPositionTop)/5
+                    xpos  = j*width/6
+                    self.imageLoad[randint(0,5)].blit(xpos,ypos,width=imageWidth,height=imageHeight)
         return
 
     def stopFlash(self, rowcol):
@@ -140,13 +252,16 @@ class MyOVBox(OVBox):
             for r in range(0, len(self.matrix)):
                 self.matrix[r][c].font_size = keyboardFontSize
                 self.matrix[r][c].color = (keyboardFontColour[0],keyboardFontColour[1],keyboardFontColour[2],keyboardFontColour[3])
+                self.matrix[r][c].bold = False
         # If row
         elif (rowcol <= 11 and isDrawHorizFlash):
             r = rowcol%6
             for c in range(0, len(self.matrix[r])):
                 self.matrix[r][c].font_size = keyboardFontSize
                 self.matrix[r][c].color = (keyboardFontColour[0],keyboardFontColour[1],keyboardFontColour[2],keyboardFontColour[3])
+                self.matrix[r][c].bold = False
         return 
+
 
     def process(self): # Called on each box clock tick (this can be configured by right-clicking the box)
         self.win.dispatch_events()
@@ -189,8 +304,8 @@ class MyOVBox(OVBox):
             
             # Pyglet/GL updates        
             self.batch.draw() 
-
             self.win.flip()
+
             self.loopCounter += 1
         return
 
