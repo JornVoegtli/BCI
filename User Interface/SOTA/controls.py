@@ -14,16 +14,17 @@ widgetPositionY = UISize*height/12
 widgetHeight = height-widgetPositionY
 keyboardPositionTop = widgetPositionY - height/12
 #FLASHING MODES
-isDrawCircleMode = False
+isDrawCircleMode = True
 isHighlightTextMode = False
-isDrawTriMode = False
-isDrawImageMode = False
-isEnlargeTextMode = True
+isDrawTriMode = True
+isDrawImageMode = True
+isEnlargeTextMode = False
 #CRAZY FLASHING MODES
-isDrawCrazyFlashMode = False
+isDrawCrazyFlashMode = True
 isCrazyDrawCircleMode = True
 isCrazyHighlightTextMode = True
 isCrazyKeyboardEnlargeColour = True
+isCrazyDrawTriMode = True
 #CIRCLE MODE
 isDrawVertCircle = True
 isDrawHorizCircle = True
@@ -42,7 +43,6 @@ isDrawVertEnlarge = True
 keyboardEnlargeFontSize = 50
 keyboardEnlargeFontColourDefault = (255,0,255,255) #default
 #TRIANGLE MODE
-isCrazyDrawTriMode = True
 isDrawVertTri = True
 isDrawHorizTri = True
 triColourDefault = [1,1,0,1]

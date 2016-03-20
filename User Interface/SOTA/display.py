@@ -10,7 +10,18 @@ text = textUC # Defined in controls.py
 
 class MyPyglet():
     def __init__(self):
-        self.imageLoad = [pyglet.image.load('img/Vinay.jpg'), pyglet.image.load('img/Sam.jpg'), pyglet.image.load('img/Jorn.jpg'), pyglet.image.load('img/Jun.jpg'), pyglet.image.load('img/Nico.jpg'), pyglet.image.load('img/javi.jpg')]
+        self.imageLoad = [pyglet.image.load('img/Vinay.jpg'), 
+                        pyglet.image.load('img/Sam.jpg'), 
+                        pyglet.image.load('img/Jorn.jpg'), 
+                        pyglet.image.load('img/Jun.jpg'), 
+                        pyglet.image.load('img/Nico.jpg'), 
+                        pyglet.image.load('img/javi.jpg'),
+                        pyglet.image.load('img/cat.jpg'),
+                        pyglet.image.load('img/cat2.jpg'),
+                        pyglet.image.load('img/cat3.jpg'),
+                        pyglet.image.load('img/cat4.jpg'),
+                        pyglet.image.load('img/cat5.jpg'),
+                        pyglet.image.load('img/cat6.jpg')]
         # Pyglet
         #create window
         self.win = window.Window(fullscreen = True)
@@ -45,12 +56,6 @@ class MyPyglet():
         #set up window rendering
         self.win.dispatch_events()
         self.win.flip()
-
-
-        # More flash settings
-        if isCrazyKeyboardEnlargeColour:
-            self.generateRandomColour()
-            keyboardEnlargeFontColour = self.colourCrazy
         return
 
     def drawTarget(self, rowStim, colStim):
@@ -159,7 +164,6 @@ class MyPyglet():
                 self.matrix[r][c].bold = True
         elif (rowcol <= 11 and isDrawHorizEnlarge): 
             r = 5-rowcol%6
-            print(r)
             for c in range(0, len(self.matrix[r])):
                 self.matrix[r][c].font_size = keyboardEnlargeFontSize
                 self.matrix[r][c].color = (keyboardEnlargeFontColour[0],keyboardEnlargeFontColour[1],keyboardEnlargeFontColour[2],keyboardEnlargeFontColour[3])
@@ -213,16 +217,16 @@ class MyPyglet():
             for j in range(0,6):
                 ypos  = j*(keyboardPositionTop)/5
                 xpos  = rowcol*width/6
-                self.imageLoad[randint(0,5)].blit(xpos,ypos,width=imageWidth,height=imageHeight)
+                self.imageLoad[randint(0,len(self.imageLoad)-1)].blit(xpos,ypos,width=imageWidth,height=imageHeight)
         elif(rowcol < 12 and isDrawHorizImage):
             for j in range (0,6):
                 ypos  = rowcol%6*(keyboardPositionTop)/5
                 xpos  = j*width/6
-                self.imageLoad[randint(0,5)].blit(xpos,ypos,width=imageWidth,height=imageHeight)
+                self.imageLoad[randint(0,len(self.imageLoad)-1)].blit(xpos,ypos,width=imageWidth,height=imageHeight)
         return
 
     def stopFlash(self, rowcol):
-        if (isEnlargeTextMode == False): 
+        if (isEnlargeTextMode == False and isDrawCrazyFlashMode == False): 
             return # No need to stopFlash if text is not enlarged
 
         # If column
