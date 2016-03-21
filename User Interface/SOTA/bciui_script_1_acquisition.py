@@ -18,6 +18,8 @@ class MyOVBox(OVBox):
     # Called once when starting the scenario
         # Display class
         self.disp = display.MyPyglet()
+        self.disp.loadingScreen()
+        self.disp.update()
 
         # Operation variables
         self.loopCounter = 0

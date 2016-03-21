@@ -59,7 +59,7 @@ targetSize = [width/6,height/12]
 targetFontColour = [255,0,255,255]
 targetColour = [0,1,0,1]
 #general UI display paramaters
-backgroundColour = [0,0,0.7,1] #1 corresponds to 255 last value is alpha
+backgroundColour = [0,0,0.5,1] #1 corresponds to 255 last value is alpha
 #text parameters
 keyboardFontSize = 36
 keyboardFontColour = [230,230,230,255]

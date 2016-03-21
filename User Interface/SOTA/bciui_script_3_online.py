@@ -26,9 +26,7 @@ class MyOVBox(OVBox):
 
         # Display class
         self.disp = display.MyPyglet()
-
-        #set up window rendering
-        self.disp.win.dispatch_events()
+        self.disp.loadingScreen()
         self.disp.update()
 
         # I/O

@@ -23,6 +23,7 @@ class MyPyglet():
                         pyglet.image.load('img/cat4.jpg'),
                         pyglet.image.load('img/cat5.jpg'),
                         pyglet.image.load('img/cat6.jpg')]
+        self.logo = pyglet.image.load('img/neurospell.png')
         # Pyglet
         #create window
         self.win = window.Window(fullscreen = True)
@@ -363,10 +364,21 @@ class MyPyglet():
 
     def drawTextBox(self):
         self.batch.draw()
+        return
 
     def update(self):
         self.win.flip()
+        return
 
     def clear(self):
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT) # Set up background
-        return 
+        return
+
+    def loadingScreen(self):
+        glClearColor(0.1,0.1,0.1,1)
+        self.clear()
+        w = self.logo.width/10
+        h = self.logo.height/10
+        self.logo.blit(width/2-w/2,height/2-h/2,width=w,height=h)
+        glClearColor(backgroundColour[0], backgroundColour[1], backgroundColour[2], backgroundColour[3])
+        return
