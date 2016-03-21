@@ -14,13 +14,13 @@ widgetPositionY = UISize*height/12
 widgetHeight = height-widgetPositionY
 keyboardPositionTop = widgetPositionY - height/12
 #FLASHING MODES
-isDrawCircleMode = True
+isDrawCircleMode = False
 isHighlightTextMode = False
-isDrawTriMode = True
+isDrawTriMode = False
 isDrawImageMode = True
 isEnlargeTextMode = False
 #CRAZY FLASHING MODES
-isDrawCrazyFlashMode = True
+isDrawCrazyFlashMode = False
 isCrazyDrawCircleMode = True
 isCrazyHighlightTextMode = True
 isCrazyKeyboardEnlargeColour = True
@@ -57,7 +57,7 @@ imageHeight = 100
 isDrawTarget = True
 targetSize = [width/6,height/12]
 targetFontColour = [255,0,255,255]
-targetColour = [0,1,0,1]
+targetColour = [1,1,0.3,1]
 #general UI display paramaters
 backgroundColour = [0,0,0.5,1] #1 corresponds to 255 last value is alpha
 #text parameters

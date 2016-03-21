@@ -64,17 +64,17 @@ class MyOVBox(OVBox):
                         self.flash = self.hashTable[newStim - OVTK_StimulationId_Label_00]
                     # Start flash
                     elif (newStim == 32779): 
-                        self.disp.startFlash(self.flash)
-                        # Draw 
                         self.disp.clear()
                         self.disp.drawTextBox()
                         self.disp.drawMatrix()
+                        self.disp.startFlash(self.flash)
+                        # Draw 
                         self.disp.update()
                     # Stop flash
                     elif (newStim == 32780):
+                        self.disp.clear()
                         self.disp.stopFlash(self.flash)
                         # Draw 
-                        self.disp.clear()
                         self.disp.drawTextBox()
                         self.disp.drawMatrix()
                         self.disp.update()

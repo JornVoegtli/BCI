@@ -94,8 +94,8 @@ class MyOVBox(OVBox):
                 # Stop flash
                 elif (newStim == 32780):
                     self.disp.stopFlash(self.flash)
-                self.disp.drawMatrix()
                 self.disp.drawTextBox() 
+                self.disp.drawMatrix()
                 self.disp.update()
                 self.sendOutput(1, newStim)
                 # Reset counter on last loop
