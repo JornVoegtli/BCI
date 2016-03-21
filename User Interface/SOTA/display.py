@@ -361,8 +361,10 @@ class MyPyglet():
             self.matIndex = 2
         return
 
+    def drawTextBox(self):
+        self.batch.draw()
+
     def update(self):
-        self.batch.draw() 
         self.win.flip()
 
     def clear(self):

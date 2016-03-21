@@ -76,13 +76,12 @@ class MyOVBox(OVBox):
                     self.sendOutput(2, self.target[1])
                 self.disp.stopFlash(self.flash)
                 self.disp.drawTarget(self.target[0], self.target[1])
-                self.disp.drawMatrix() 
-                self.disp.win.flip()
-                self.disp.batch.draw() 
+                self.disp.drawMatrix()
+                self.disp.drawTextBox() 
+                self.disp.update()
 
             # Flash for the next (flashDuration) loops
             elif (self.loopCounter <= targetDelay + flashDuration):
-                self.disp.drawMatrix()
                 newStim = self.readFlash()
                 # Aim row/column flash
                 if (33025 <= newStim and newStim <= 33036):
@@ -93,9 +92,9 @@ class MyOVBox(OVBox):
                 # Stop flash
                 elif (newStim == 32780):
                     self.disp.stopFlash(self.flash)
-
-                self.disp.win.flip()
-                self.disp.batch.draw() 
+                self.disp.drawMatrix()
+                self.disp.drawTextBox() 
+                self.disp.update()
                 self.sendOutput(1, newStim)
                 # Reset counter on last loop
                 if (self.loopCounter == targetDelay + flashDuration): 

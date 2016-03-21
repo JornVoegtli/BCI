@@ -28,141 +28,31 @@ class MyOVBox(OVBox):
         self.disp = display.MyPyglet()
 
         #set up window rendering
-        self.win.dispatch_events()
-        self.win.flip()
+        self.disp.win.dispatch_events()
+        self.disp.update()
+
+        # I/O
+        self.initOutputs() # Set output stimulation headers
         return
 
     def endExperiment(self):
         print("Quitting experiment.")
-        self.sendOutput(0, OVTK_StimulationId_Label_00)
-        self.win.close()
+        self.sendOutput(0, 32770)
+        self.closeOutputs()
+        self.disp.win.close()
         return 
 
-    def drawTarget(self, rowStim, colStim):
-        if (isDrawTarget):
-            rowNum = rowStim - OVTK_StimulationId_Label_01
-            colNum = colStim - OVTK_StimulationId_Label_07
-            x = colNum * width / 6
-            y = (5-rowNum) * (keyboardPositionTop/5)
-            primitives.drawRect(x, y, targetSize[0], targetSize[1], targetColour[0],targetColour[1],targetColour[2],targetColour[3])
-        return
-
-    def startFlash(self, rowcol):
-        # If column
-        if (rowcol <= 5 and isDrawVertFlash):
-            if (isEnlargeTextMode):
-                c = rowcol
-                for r in range(0, len(self.matrices[self.matIndex])):
-                    self.matrices[self.matIndex][r][c].font_size = keyboardEnlargeFontSize
-                    self.matrices[self.matIndex][r][c].color = (keyboardEnlargeFontColour[0],keyboardEnlargeFontColour[1],keyboardEnlargeFontColour[2],keyboardEnlargeFontColour[3])
-            if (isHighlightTextMode):
-                primitives.drawRect(rowcol*width/6, 0, vertFlashSize[0], vertFlashSize[1], vertFlashColour[0],vertFlashColour[1],vertFlashColour[2],vertFlashColour[3])
-        # If row
-        elif (rowcol <= 11 and isDrawHorizFlash):
-            if (isEnlargeTextMode):
-                r = rowcol%6
-                for c in range(0, len(self.matrices[self.matIndex][r])):
-                    self.matrices[self.matIndex][r][c].font_size = keyboardEnlargeFontSize
-                    self.matrices[self.matIndex][r][c].color = (keyboardEnlargeFontColour[0],keyboardEnlargeFontColour[1],keyboardEnlargeFontColour[2],keyboardEnlargeFontColour[3])
-            if (isHighlightTextMode):
-                primitives.drawRect(0, rowcol%6*height/12, horizFlashSize[0], horizFlashSize[1], horizFlashColour[0], horizFlashColour[1], horizFlashColour[2], horizFlashColour[3])
-        return
-
-    def stopFlash(self, rowcol):
-        if (isEnlargeTextMode == False): 
-            return # No need to stopFlash if text is not enlarged
-
-        # If column
-        if (rowcol <= 5 and isDrawVertFlash):
-            c = rowcol
-            for r in range(0, len(self.matrices[self.matIndex])):
-                self.matrices[self.matIndex][r][c].font_size = keyboardFontSize
-                self.matrices[self.matIndex][r][c].color = (keyboardFontColour[0],keyboardFontColour[1],keyboardFontColour[2],keyboardFontColour[3])
-        # If row
-        elif (rowcol <= 11 and isDrawHorizFlash):
-            r = rowcol%6
-            for c in range(0, len(self.matrices[self.matIndex][r])):
-                self.matrices[self.matIndex][r][c].font_size = keyboardFontSize
-                self.matrices[self.matIndex][r][c].color = (keyboardFontColour[0],keyboardFontColour[1],keyboardFontColour[2],keyboardFontColour[3])
-        return 
-
-    def updatePredictiveText(self):
-        ## Predictive text
-        word = ((self.current_text).split(" "))[-1] # Get only last word
-        corrected_text = word_predictor.correct(word)
-
-        ypos = keyboardPositionTop - (0)*(keyboardPositionTop/5)
-        xpos  = 0*width/6 + width/40
-        temp0 = pyglet.text.Label(corrected_text[0], 
-                font_name='Courier New',
-                font_size=keyboardFontSize,
-                color=(keyboardFontColour[0],keyboardFontColour[1],keyboardFontColour[2],keyboardFontColour[3]),
-                x=xpos, y=ypos,
-                anchor_x='left', anchor_y='bottom')
-       
-        ypos = keyboardPositionTop - (0)*(keyboardPositionTop/5)
-        xpos  = 1*width/6 + width/40
-        temp1 = pyglet.text.Label(corrected_text[1], 
-                font_name='Courier New',
-                font_size=keyboardFontSize,
-                color=(keyboardFontColour[0],keyboardFontColour[1],keyboardFontColour[2],keyboardFontColour[3]),
-                x=xpos, y=ypos,
-                anchor_x='left', anchor_y='bottom')
-        
-        ypos = keyboardPositionTop - (0)*(keyboardPositionTop/5)
-        xpos  = 2*width/6 + width/40
-        temp2 = pyglet.text.Label(corrected_text[2], 
-                font_name='Courier New',
-                font_size=keyboardFontSize,
-                color=(keyboardFontColour[0],keyboardFontColour[1],keyboardFontColour[2],keyboardFontColour[3]),
-                x=xpos, y=ypos,
-                anchor_x='left', anchor_y='bottom')
-
-        for i in range(len(self.matrices)): # Need to update for all matrices
-            self.matrices[i][0][0] = temp0
-            self.matrices[i][0][1] = temp1
-            self.matrices[i][0][2] = temp2
-            self.text[i][0][0] = corrected_text[0]
-            self.text[i][0][1] = corrected_text[1]
-            self.text[i][0][2] = corrected_text[2]
-        return
-
-    def makeSelection(self, selection):
-        selection[0] -= 33025
-        selection[1] -= 33031
-        self.text_input = self.text[self.matIndex][selection[0]][selection[1]]
-        # Normal text
-        if (selection[1] <= 4) : # Not rightmost column 
-            if (self.text_input == "SPACE"): 
-                self.text_input = " "
-            print("Text selection:", self.text_input)
-            self.current_text = self.current_text + self.text_input
-            self.widget.caret.on_text(self.text_input)
-            self.updatePredictiveText()
-        # Backspace
-        elif (self.text_input == u"\u2190"): 
-            self.current_text = self.current_text.pop()
-        elif (self.text_input == u"\u2190"): 
-            print("Pressed ENTER")
-        elif (self.text_input == "ABC"):
-            self.matIndex = 0
-        elif (self.text_input == "abc"): 
-            self.matIndex = 1
-        elif (self.text_input == "123"):
-            self.matIndex = 2
-        return
-    
     def process(self): # Called on each box clock tick (this can be configured by right-clicking the box)
-        self.win.dispatch_events()
+        self.disp.win.dispatch_events()
         # Stop 
-        if self.win.has_exit:
+        if self.disp.win.has_exit:
             self.endExperiment()
         # Fast forward
-        if (self.keys[key.F]):
-            self.sendOutput(1, OVTK_StimulationId_Label_00)
+        if (self.disp.keys[key.F]):
+            self.sendOutput(0, OVTK_StimulationId_Label_00)
         # Play 
-        if (self.keys[key.P]):
-            self.sendOutput(2, OVTK_StimulationId_Label_00)
+        if (self.disp.keys[key.P]):
+            self.sendOutput(0, OVTK_StimulationId_Label_01)
 
         # Read flashes
         for chunkIndex in range( len(self.input[0]) ):
@@ -176,46 +66,21 @@ class MyOVBox(OVBox):
                         self.flash = self.hashTable[newStim - OVTK_StimulationId_Label_00]
                     # Start flash
                     elif (newStim == 32779): 
-                        self.startFlash(self.flash)
+                        self.disp.startFlash(self.flash)
                         # Draw 
-                        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT) # Set up background
-                        self.batch.draw() 
-                        for r in range (0,len(self.matrices[self.matIndex])):
-                            for c in range(0, len(self.matrices[self.matIndex][r])):
-                                self.matrices[self.matIndex][r][c].draw()
-                        self.win.flip()
-                        #pyglet.graphics.delete()
+                        self.disp.clear()
+                        self.disp.drawTextBox()
+                        self.disp.drawMatrix()
+                        self.disp.update()
                     # Stop flash
                     elif (newStim == 32780):
-                        self.stopFlash(self.flash)
+                        self.disp.stopFlash(self.flash)
                         # Draw 
-                        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT) # Set up background
-                        self.batch.draw() 
-                        for r in range (0,len(self.matrices[self.matIndex])):
-                            for c in range(0, len(self.matrices[self.matIndex][r])):
-                                self.matrices[self.matIndex][r][c].draw()
-                        self.win.flip()
-        """
-        # Read target
-        for chunkIndex in range( len(self.input[1]) ):
-            chunk = self.input[1].pop()
-            if(type(chunk) == OVStimulationSet):
-                for stimIdx in range(len(chunk)):
-                    stim = chunk.pop(0); 
-                    if (33025 <= stim.identifier and stim.identifier <= 33030): # Row
-                        self.target[0] = stim.identifier
-                    elif (33031 <= stim.identifier and stim.identifier <= 33036): # Column
-                        self.target[1] = stim.identifier
-                        # Only draw target upon registering new column, so the pair will be complete
-                        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT) # Set up background
-                        self.drawTarget(self.target[0], self.target[1])
-                        self.batch.draw() 
-                        for r in range (0,len(self.matrices[self.matIndex])):
-                            for c in range(0, len(self.matrices[self.matIndex][r])):
-                                self.matrices[self.matIndex][r][c].draw()
-                        self.win.flip()
-                        print("Target", self.target[0], " ", self.target[1])
-        """
+                        self.disp.clear()
+                        self.disp.drawTextBox()
+                        self.disp.drawMatrix()
+                        self.disp.update()
+
         # Read row selection
         for chunkIndex in range( len(self.input[2]) ):
             chunk = self.input[2].pop()
@@ -225,15 +90,13 @@ class MyOVBox(OVBox):
                     if (33025 <= stim.identifier and stim.identifier <= 33030): # Row
                         self.selection[0] = stim.identifier
                         # Only draw target upon registering new ROW, so the pair will be complete - This is special! Column is received before row
-                        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT) # Set up background
-                        self.drawTarget(self.selection[0], self.selection[1]) # Drawing selection actually, but same la
+                        self.disp.clear()
+                        self.disp.drawTarget(self.selection[0], self.selection[1]) # Drawing selection actually, but same la
                         print("Selection", self.selection)
-                        self.makeSelection(self.selection)
-                        self.batch.draw() 
-                        for r in range (0,len(self.matrices[self.matIndex])):
-                            for c in range(0, len(self.matrices[self.matIndex][r])):
-                                self.matrices[self.matIndex][r][c].draw()
-                        self.win.flip()
+                        self.disp.makeSelection(self.selection)
+                        self.disp.drawTextBox() 
+                        self.disp.drawMatrix()
+                        self.disp.update()
         
         # Read column selection
         for chunkIndex in range( len(self.input[3]) ):
@@ -243,7 +106,7 @@ class MyOVBox(OVBox):
                     stim=chunk.pop(0);
                     if (33031 <= stim.identifier and stim.identifier <= 33036): # Column
                         self.selection[1] = stim.identifier
-                        print("Column select", stim.identifier)
+                        #print("Column select", stim.identifier)
 		
         return
 
