@@ -14,13 +14,13 @@ widgetPositionY = UISize*height/12
 widgetHeight = height-widgetPositionY
 keyboardPositionTop = widgetPositionY - height/12
 #FLASHING MODES
-isDrawCircleMode = False
-isHighlightTextMode = False
-isDrawTriMode = False
+isDrawCircleMode = True
+isHighlightTextMode = True
+isDrawTriMode = True
 isDrawImageMode = True
-isEnlargeTextMode = False
+isEnlargeTextMode = True
 #CRAZY FLASHING MODES
-isDrawCrazyFlashMode = False
+isDrawCrazyFlashMode = True
 isCrazyDrawCircleMode = True
 isCrazyHighlightTextMode = True
 isCrazyKeyboardEnlargeColour = True

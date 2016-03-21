@@ -387,8 +387,9 @@ class MyPyglet():
             if (self.text_input == "SPACE"): 
                 self.text_input = " "
             print("Text selection:", self.text_input)
-            self.current_text = self.current_text + self.text_input
-            self.widget.caret.on_text(self.text_input)
+            if(selection[0] == 0 and selection[1] < 2):
+                self.current_text = self.current_text + self.text_input
+                self.widget.caret.on_text(self.text_input)  
             self.updatePredictiveText()
         # Backspace
         elif (self.text_input == u"\u2190"): 
