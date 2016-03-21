@@ -393,7 +393,7 @@
 					<TypeIdentifier>(0x007deef9, 0x2f3e95c6)</TypeIdentifier>
 					<Name>Clock frequency (Hz)</Name>
 					<DefaultValue>60</DefaultValue>
-					<Value>14</Value>
+					<Value>10</Value>
 					<Modifiability>false</Modifiability>
 				</Setting>
 				<Setting>
@@ -528,10 +528,6 @@
 				<Attribute>
 					<Identifier>(0xad100179, 0xa3c984ab)</Identifier>
 					<Value>106</Value>
-				</Attribute>
-				<Attribute>
-					<Identifier>(0xc67a01dc, 0x28ce06c1)</Identifier>
-					<Value></Value>
 				</Attribute>
 				<Attribute>
 					<Identifier>(0xc73e83ec, 0xf855c5bc)</Identifier>
@@ -1558,8 +1554,8 @@
 		</Comment>
 		<Comment>
 			<Identifier>(0x000028d1, 0x000038f7)</Identifier>
-			<Text>Python UI box frequency = 14Hz
-Period between each flash is 0.211s</Text>
+			<Text>Python UI box frequency = 10Hz
+Period between each flash is 0.297s</Text>
 			<Attributes>
 				<Attribute>
 					<Identifier>(0x473d9a43, 0x97fc0a97)</Identifier>
