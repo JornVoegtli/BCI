@@ -160,13 +160,25 @@ class MyPyglet():
             #if randNum == 0:
             #   self.drawHighlightText(rowcol)
             if randNum == 1:
-                self.drawEnlargeText(rowcol)
+                if (isEnlargeTextMode):
+                    self.drawEnlargeText(rowcol,)
+                else:
+                    self.startFlash(rowcol) # Recursion!
             elif randNum == 2:
-                self.drawCircleFlash(rowcol)
+                if (isDrawCircleMode):
+                    self.drawCircleFlash(rowcol)
+                else:
+                    self.startFlash(rowcol) # Recursion!
             elif randNum == 3:
-                self.drawTriFlash(rowcol)
+                if (isDrawTriMode):
+                    self.drawTriFlash(rowcol)
+                else:
+                    self.startFlash(rowcol) # Recursion!
             elif randNum == 4:
-                self.drawImage(rowcol)
+                if (isDrawImageMode):
+                    self.drawImage(rowcol)
+                else:
+                    self.startFlash(rowcol) # Recursion!
         else:
             if(isEnlargeTextMode):
                 self.drawEnlargeText(rowcol)
@@ -251,7 +263,7 @@ class MyPyglet():
         if (rowcol < 6 and isDrawVertCircle):
             for j in range (0,6):
                 ypos  = j*(keyboardPositionTop)/5 + circleRadius/4
-                xpos  = rowcol*width/6 + circleRadius/4
+                xpos  = rowcol*width/6 + circleRadius/4 
                 primitives.drawCircle(xpos,ypos,circleRadius,circleColourVert[0],circleColourVert[1],circleColourVert[2],circleColourVert[3])
         elif(rowcol < 12 and isDrawHorizCircle):
             for j in range (0,6):

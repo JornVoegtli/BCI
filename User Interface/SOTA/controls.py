@@ -20,7 +20,7 @@ isDrawTriMode = False
 isDrawImageMode = True
 isEnlargeTextMode = True
 #CRAZY FLASHING MODES
-isDrawCrazyFlashMode = False
+isDrawCrazyFlashMode = True
 isCrazyDrawCircleMode = True
 isCrazyHighlightTextMode = True
 isCrazyKeyboardEnlargeColour = True
