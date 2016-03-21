@@ -262,13 +262,13 @@ class MyPyglet():
             triColourVert = triColourDefault
         if (rowcol < 6 and isDrawVertTri):
             for j in range (0,6):
-                ypos  = j*(keyboardPositionTop)/5
-                xpos  = rowcol*width/6 
+                ypos  = j*(keyboardPositionTop)/6 + (height/6/2) - triHeight/2
+                xpos  = rowcol*width/6 + (width/6/2) - triWidth/2 
                 primitives.drawTri(xpos,ypos,triWidth,triHeight,triColourVert[0],triColourVert[1],triColourVert[2],triColourVert[3])
         elif(rowcol < 12 and isDrawHorizTri):
             for j in range (0,6):
-                ypos  = rowcol%6*(keyboardPositionTop)/5
-                xpos  = j*width/6
+                ypos  = rowcol%6*(keyboardPositionTop)/6 + (height/6/2) - triHeight/2
+                xpos  = j*width/6 + (width/6/2) - triWidth/2
                 primitives.drawTri(xpos,ypos,triWidth,triHeight,triColourHoriz[0],triColourHoriz[1],triColourHoriz[2],triColourHoriz[3])                
         return
 
@@ -296,13 +296,13 @@ class MyPyglet():
     def drawImage(self, rowcol):
         if(rowcol<6 and isDrawVertImage):
             for j in range(0,6):
-                ypos  = j*(keyboardPositionTop)/5
-                xpos  = rowcol*width/6
+                ypos  = j*(keyboardPositionTop)/6
+                xpos  = rowcol*width/6 + (width/6)/2 - imageWidth/2
                 self.imageLoad[randint(0,len(self.imageLoad)-1)].blit(xpos,ypos,width=imageWidth,height=imageHeight)
         elif(rowcol < 12 and isDrawHorizImage):
             for j in range (0,6):
-                ypos  = rowcol%6*(keyboardPositionTop)/5
-                xpos  = j*width/6
+                ypos  = rowcol%6*(keyboardPositionTop)/6 
+                xpos  = j*width/6 + (width/6)/2 - imageWidth/2
                 self.imageLoad[randint(0,len(self.imageLoad)-1)].blit(xpos,ypos,width=imageWidth,height=imageHeight)
         return
 

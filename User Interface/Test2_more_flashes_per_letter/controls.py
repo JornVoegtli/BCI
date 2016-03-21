@@ -16,9 +16,9 @@ keyboardPositionTop = widgetPositionY
 #FLASHING MODES
 isDrawCircleMode = True
 isHighlightTextMode = False
-isDrawTriMode = False
-isDrawImageMode = False
-isEnlargeTextMode = False
+isDrawTriMode = True
+isDrawImageMode = True
+isEnlargeTextMode = True
 #CRAZY FLASHING MODES
 isDrawCrazyFlashMode = True
 isCrazyDrawCircleMode = True
