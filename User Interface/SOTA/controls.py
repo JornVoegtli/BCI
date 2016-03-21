@@ -18,9 +18,9 @@ isDrawCircleMode = False
 isHighlightTextMode = False
 isDrawTriMode = False
 isDrawImageMode = True
-isEnlargeTextMode = True
+isEnlargeTextMode = False
 #CRAZY FLASHING MODES
-isDrawCrazyFlashMode = True
+isDrawCrazyFlashMode = False
 isCrazyDrawCircleMode = True
 isCrazyHighlightTextMode = True
 isCrazyKeyboardEnlargeColour = True
