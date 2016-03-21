@@ -66,7 +66,6 @@ class MyOVBox(OVBox):
                     elif (newStim == 32779): 
                         self.disp.clear()
                         self.disp.drawTextBox()
-                        self.disp.drawMatrix()
                         self.disp.startFlash(self.flash)
                         # Draw 
                         self.disp.update()
@@ -76,7 +75,6 @@ class MyOVBox(OVBox):
                         self.disp.stopFlash(self.flash)
                         # Draw 
                         self.disp.drawTextBox()
-                        self.disp.drawMatrix()
                         self.disp.update()
 
         # Read row selection

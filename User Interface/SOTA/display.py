@@ -99,6 +99,7 @@ class MyPyglet():
 
         #set up window rendering
         self.win.dispatch_events()
+        #self.drawMatrix()
         self.win.flip()
         return
 
@@ -174,7 +175,6 @@ class MyPyglet():
             if(isDrawCircleMode):
                 self.drawCircleFlash(rowcol)
             if(isDrawImageMode):
-                print("Drawing image")
                 self.drawImage(rowcol)
             if(isDrawTriMode):
                 self.drawTriFlash(rowcol)
@@ -215,6 +215,7 @@ class MyPyglet():
                 self.matrices[matIndex][r][c].font_size = keyboardEnlargeFontSize
                 self.matrices[matIndex][r][c].color = (keyboardEnlargeFontColour[0],keyboardEnlargeFontColour[1],keyboardEnlargeFontColour[2],keyboardEnlargeFontColour[3])
                 self.matrices[matIndex][r][c].bold = True
+        self.drawMatrix()
         return
 
     def drawTriFlash(self,rowcol):
@@ -264,13 +265,11 @@ class MyPyglet():
             for j in range(0,6):
                 ypos  = j*(keyboardPositionTop)/5
                 xpos  = rowcol*width/6
-                print("Drawing at", xpos, ypos)
                 self.imageLoad[randint(0,len(self.imageLoad)-1)].blit(xpos,ypos,width=imageWidth,height=imageHeight)
         elif(rowcol < 12 and isDrawHorizImage):
             for j in range (0,6):
                 ypos  = rowcol%6*(keyboardPositionTop)/5
                 xpos  = j*width/6
-                print("Drawing at", xpos, ypos)
                 self.imageLoad[randint(0,len(self.imageLoad)-1)].blit(xpos,ypos,width=imageWidth,height=imageHeight)
         return
 
@@ -292,6 +291,7 @@ class MyPyglet():
                 self.matrices[matIndex][r][c].font_size = keyboardFontSize
                 self.matrices[matIndex][r][c].color = (keyboardFontColour[0],keyboardFontColour[1],keyboardFontColour[2],keyboardFontColour[3])
                 self.matrices[matIndex][r][c].bold = False
+        self.drawMatrix()
         return 
 
     def drawMatrix(self): # For online

@@ -18,7 +18,7 @@ isDrawCircleMode = False
 isHighlightTextMode = False
 isDrawTriMode = False
 isDrawImageMode = True
-isEnlargeTextMode = False
+isEnlargeTextMode = True
 #CRAZY FLASHING MODES
 isDrawCrazyFlashMode = False
 isCrazyDrawCircleMode = True
