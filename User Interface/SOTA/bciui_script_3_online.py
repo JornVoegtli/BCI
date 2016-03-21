@@ -4,14 +4,11 @@ import os, sys
 from pyglet.gl import *
 from pyglet import *
 from pyglet.window import *
-import primitives
-import user_input
 import random
-from random import randint
 import string
 import ctypes
 from controls import *
-import word_predictor
+import display
 
 class MyOVBox(OVBox):
     def __init__(self):
@@ -27,82 +24,8 @@ class MyOVBox(OVBox):
     	self.colIndex = 0
         self.hashTable = {12:5,11:4,10:3,9:2,8:1,7:0,6:6,5:7,4:8,3:9,2:10,1:11}
 
-        # Pyglet
-        #create window
-        self.win = window.Window(fullscreen = True)
-        
-        #colour background and set up openGL rendering
-        glClearColor(backgroundColour[0], backgroundColour[1], backgroundColour[2], backgroundColour[3])
-        glEnable(GL_BLEND)
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
-        
-        #set up keyboard input
-        self.keys = key.KeyStateHandler()
-        self.win.push_handlers(self.keys)
-        
-        #set up user input text display
-        self.batch = pyglet.graphics.Batch()
-        self.widget = user_input.TextWidget('', 0, int(widgetPositionY), int(width), int(widgetHeight), self.batch)
-        self.text_input = ""
-        self.widget.caret.on_text(self.text_input)
-        self.current_text = "" 
-
-        # Set up user keyboard matrices
-        # Uppercase
-        matrixUC = []
-        for j in range(0, len(textUC) ):
-            row = []
-            for i in range(0, len(textUC[j]) ):
-                line = textUC[j][i]
-                ypos = keyboardPositionTop - (j)*(keyboardPositionTop/5) 
-                xpos = i*width/6 + width/40
-                temp = pyglet.text.Label(line, 
-                    font_name='Courier New',
-                    font_size=keyboardFontSize,
-                    color=(keyboardFontColour[0],keyboardFontColour[1],keyboardFontColour[2],keyboardFontColour[3]),
-                    x=xpos, y=ypos,
-                    anchor_x='left', anchor_y='bottom')
-                row.append(temp)
-            matrixUC.append(row)
-        # Lowercase
-        matrixLC = []
-        for j in range(0, len(textLC) ):
-            row = []
-            for i in range(0, len(textLC[j]) ):
-                line = textLC[j][i]
-                ypos = keyboardPositionTop - (j)*(keyboardPositionTop/5)
-                xpos = i*width/6 + width/40
-                temp = pyglet.text.Label(line, 
-                    font_name='Courier New',
-                    font_size=keyboardFontSize,
-                    color=(keyboardFontColour[0],keyboardFontColour[1],keyboardFontColour[2],keyboardFontColour[3]),
-                    x=xpos, y=ypos,
-                    anchor_x='left', anchor_y='bottom')
-                row.append(temp)
-            matrixLC.append(row)
-        # Numbers
-        matrixNum = []
-        for j in range(0, len(textNum) ):
-            row = []
-            for i in range(0, len(textNum[j]) ):
-                line = textNum[j][i]
-                ypos = keyboardPositionTop - (j)*(keyboardPositionTop/5)
-                xpos = i*width/6 + width/40
-                temp = pyglet.text.Label(line, 
-                    font_name='Courier New',
-                    font_size=keyboardFontSize,
-                    color=(keyboardFontColour[0],keyboardFontColour[1],keyboardFontColour[2],keyboardFontColour[3]),
-                    x=xpos, y=ypos,
-                    anchor_x='left', anchor_y='bottom')
-                row.append(temp)
-            matrixNum.append(row)
-        # Make matrix lists
-        self.matrices = [matrixUC, matrixLC, matrixNum]
-        self.text = [textUC, textLC, textNum]
-        # Choose initial matrix
-        self.matIndex = matIndex
-        # Do first text prediction
-        self.updatePredictiveText()
+        # Display class
+        self.disp = display.MyPyglet()
 
         #set up window rendering
         self.win.dispatch_events()

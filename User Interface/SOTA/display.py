@@ -5,6 +5,7 @@ from controls import *
 import user_input
 from random import randint
 import primitives
+import word_predictor
 
 text = textUC # Defined in controls.py
 
@@ -37,14 +38,16 @@ class MyPyglet():
         self.widget = user_input.TextWidget('', 0, int(widgetPositionY), int(width),int(widgetHeight), self.batch)
         self.text_input = ""
         self.widget.caret.on_text(self.text_input)
-        #set up user keyboard matrix
-        self.matrix = []
-        for j in range(0, len(text) ):
+        self.current_text = "" 
+        # Set up user keyboard matrices
+        # Uppercase
+        matrixUC = []
+        for j in range(0, len(textUC) ):
             row = []
-            for i in range(0, len(text[j]) ):
-                line = text[j][i]
-                ypos = keyboardPositionTop - (j)*(keyboardPositionTop/5)
-                xpos = i*width/6 + width/40 
+            for i in range(0, len(textUC[j]) ):
+                line = textUC[j][i]
+                ypos = keyboardPositionTop - (j)*(keyboardPositionTop/5) 
+                xpos = i*width/6 + width/40
                 temp = pyglet.text.Label(line, 
                     font_name='Courier New',
                     font_size=keyboardFontSize,
@@ -52,7 +55,47 @@ class MyPyglet():
                     x=xpos, y=ypos,
                     anchor_x='left', anchor_y='bottom')
                 row.append(temp)
-            self.matrix.append(row)
+            matrixUC.append(row)
+        # Lowercase
+        matrixLC = []
+        for j in range(0, len(textLC) ):
+            row = []
+            for i in range(0, len(textLC[j]) ):
+                line = textLC[j][i]
+                ypos = keyboardPositionTop - (j)*(keyboardPositionTop/5)
+                xpos = i*width/6 + width/40
+                temp = pyglet.text.Label(line, 
+                    font_name='Courier New',
+                    font_size=keyboardFontSize,
+                    color=(keyboardFontColour[0],keyboardFontColour[1],keyboardFontColour[2],keyboardFontColour[3]),
+                    x=xpos, y=ypos,
+                    anchor_x='left', anchor_y='bottom')
+                row.append(temp)
+            matrixLC.append(row)
+        # Numbers
+        matrixNum = []
+        for j in range(0, len(textNum) ):
+            row = []
+            for i in range(0, len(textNum[j]) ):
+                line = textNum[j][i]
+                ypos = keyboardPositionTop - (j)*(keyboardPositionTop/5)
+                xpos = i*width/6 + width/40
+                temp = pyglet.text.Label(line, 
+                    font_name='Courier New',
+                    font_size=keyboardFontSize,
+                    color=(keyboardFontColour[0],keyboardFontColour[1],keyboardFontColour[2],keyboardFontColour[3]),
+                    x=xpos, y=ypos,
+                    anchor_x='left', anchor_y='bottom')
+                row.append(temp)
+            matrixNum.append(row)
+        # Make matrix lists
+        self.matrices = [matrixUC, matrixLC, matrixNum]
+        self.text = [textUC, textLC, textNum]
+        # Choose initial matrix
+        self.matIndex = matIndex
+        # Do first text prediction
+        self.updatePredictiveText()
+
         #set up window rendering
         self.win.dispatch_events()
         self.win.flip()
@@ -134,6 +177,7 @@ class MyPyglet():
             if(isDrawTriMode):
                 self.drawTriFlash(rowcol)
         return
+
     def drawHighlightText(self,rowcol):
         if(isCrazyHighlightTextMode):
             self.generateRandomColour()
@@ -150,6 +194,7 @@ class MyPyglet():
                 if (isHighlightTextMode):
                     primitives.drawRect(0, rowcol%6*keyboardPositionTop/5, horizFlashSize[0], horizFlashSize[1], horizFlashColour[0], horizFlashColour[1], horizFlashColour[2], horizFlashColour[3])
         return
+
     def drawEnlargeText(self,rowcol):  
         if isCrazyKeyboardEnlargeColour:
             self.generateRandomColour()
@@ -158,16 +203,16 @@ class MyPyglet():
             keyboardEnlargeFontColour = keyboardEnlargeFontColourDefault 
         if (rowcol <= 5 and isDrawVertEnlarge): 
             c = rowcol
-            for r in range(0, len(self.matrix)):
-                self.matrix[r][c].font_size = keyboardEnlargeFontSize
-                self.matrix[r][c].color = (keyboardEnlargeFontColour[0],keyboardEnlargeFontColour[1],keyboardEnlargeFontColour[2],keyboardEnlargeFontColour[3])
-                self.matrix[r][c].bold = True
+            for r in range(0, len(self.matrices[matIndex])):
+                self.matrices[matIndex][r][c].font_size = keyboardEnlargeFontSize
+                self.matrices[matIndex][r][c].color = (keyboardEnlargeFontColour[0],keyboardEnlargeFontColour[1],keyboardEnlargeFontColour[2],keyboardEnlargeFontColour[3])
+                self.matrices[matIndex][r][c].bold = True
         elif (rowcol <= 11 and isDrawHorizEnlarge): 
             r = 5-rowcol%6
-            for c in range(0, len(self.matrix[r])):
-                self.matrix[r][c].font_size = keyboardEnlargeFontSize
-                self.matrix[r][c].color = (keyboardEnlargeFontColour[0],keyboardEnlargeFontColour[1],keyboardEnlargeFontColour[2],keyboardEnlargeFontColour[3])
-                self.matrix[r][c].bold = True
+            for c in range(0, len(self.matrices[matIndex][r])):
+                self.matrices[matIndex][r][c].font_size = keyboardEnlargeFontSize
+                self.matrices[matIndex][r][c].color = (keyboardEnlargeFontColour[0],keyboardEnlargeFontColour[1],keyboardEnlargeFontColour[2],keyboardEnlargeFontColour[3])
+                self.matrices[matIndex][r][c].bold = True
         return
 
     def drawTriFlash(self,rowcol):
@@ -232,28 +277,93 @@ class MyPyglet():
         # If column
         if (rowcol <= 5 and isDrawVertEnlarge):
             c = rowcol
-            for r in range(0, len(self.matrix)):
-                self.matrix[r][c].font_size = keyboardFontSize
-                self.matrix[r][c].color = (keyboardFontColour[0],keyboardFontColour[1],keyboardFontColour[2],keyboardFontColour[3])
-                self.matrix[r][c].bold = False
+            for r in range(0, len(self.matrices[matIndex])):
+                self.matrices[matIndex][r][c].font_size = keyboardFontSize
+                self.matrices[matIndex][r][c].color = (keyboardFontColour[0],keyboardFontColour[1],keyboardFontColour[2],keyboardFontColour[3])
+                self.matrices[matIndex][r][c].bold = False
         # If row
         elif (rowcol <= 11 and isDrawHorizEnlarge):
             r = 5-rowcol%6
-            for c in range(0, len(self.matrix[r])):
-                self.matrix[r][c].font_size = keyboardFontSize
-                self.matrix[r][c].color = (keyboardFontColour[0],keyboardFontColour[1],keyboardFontColour[2],keyboardFontColour[3])
-                self.matrix[r][c].bold = False
+            for c in range(0, len(self.matrices[matIndex][r])):
+                self.matrices[matIndex][r][c].font_size = keyboardFontSize
+                self.matrices[matIndex][r][c].color = (keyboardFontColour[0],keyboardFontColour[1],keyboardFontColour[2],keyboardFontColour[3])
+                self.matrices[matIndex][r][c].bold = False
         return 
 
-    def drawMatrix(self):
-        # Draw keyboard matrix
-        for r in range (0,len(self.matrix)):
-            for c in range(0, len(self.matrix[r])):
-                self.matrix[r][c].draw()
+    def drawMatrix(self): # For online
+        for r in range (0,len(self.matrices[self.matIndex])):
+            for c in range(0, len(self.matrices[self.matIndex][r])):
+                self.matrices[self.matIndex][r][c].draw()
+
+    def updatePredictiveText(self):
+        ## Predictive text
+        word = ((self.current_text).split(" "))[-1] # Get only last word
+        corrected_text = word_predictor.correct(word)
+
+        ypos = keyboardPositionTop - (0)*(keyboardPositionTop/5)
+        xpos  = 0*width/6 + width/40
+        temp0 = pyglet.text.Label(corrected_text[0], 
+                font_name='Courier New',
+                font_size=keyboardFontSize,
+                color=(keyboardFontColour[0],keyboardFontColour[1],keyboardFontColour[2],keyboardFontColour[3]),
+                x=xpos, y=ypos,
+                anchor_x='left', anchor_y='bottom')
+       
+        ypos = keyboardPositionTop - (0)*(keyboardPositionTop/5)
+        xpos  = 1*width/6 + width/40
+        temp1 = pyglet.text.Label(corrected_text[1], 
+                font_name='Courier New',
+                font_size=keyboardFontSize,
+                color=(keyboardFontColour[0],keyboardFontColour[1],keyboardFontColour[2],keyboardFontColour[3]),
+                x=xpos, y=ypos,
+                anchor_x='left', anchor_y='bottom')
         
+        ypos = keyboardPositionTop - (0)*(keyboardPositionTop/5)
+        xpos  = 2*width/6 + width/40
+        temp2 = pyglet.text.Label(corrected_text[2], 
+                font_name='Courier New',
+                font_size=keyboardFontSize,
+                color=(keyboardFontColour[0],keyboardFontColour[1],keyboardFontColour[2],keyboardFontColour[3]),
+                x=xpos, y=ypos,
+                anchor_x='left', anchor_y='bottom')
+
+        for i in range(len(self.matrices)): # Need to update for all matrices
+            self.matrices[i][0][0] = temp0
+            self.matrices[i][0][1] = temp1
+            self.matrices[i][0][2] = temp2
+            self.text[i][0][0] = corrected_text[0]
+            self.text[i][0][1] = corrected_text[1]
+            self.text[i][0][2] = corrected_text[2]
+        return
+
+    def makeSelection(self, selection):
+        selection[0] -= 33025
+        selection[1] -= 33031
+        self.text_input = self.text[self.matIndex][selection[0]][selection[1]]
+        # Normal text
+        if (selection[1] <= 4) : # Not rightmost column 
+            if (self.text_input == "SPACE"): 
+                self.text_input = " "
+            print("Text selection:", self.text_input)
+            self.current_text = self.current_text + self.text_input
+            self.widget.caret.on_text(self.text_input)
+            self.updatePredictiveText()
+        # Backspace
+        elif (self.text_input == u"\u2190"): 
+            self.current_text = self.current_text.pop()
+        elif (self.text_input == u"\u2190"): 
+            print("Pressed ENTER")
+        elif (self.text_input == "ABC"):
+            self.matIndex = 0
+        elif (self.text_input == "abc"): 
+            self.matIndex = 1
+        elif (self.text_input == "123"):
+            self.matIndex = 2
+        return
+
     def update(self):
-        self.disp.batch.draw() 
-        self.disp.win.flip()
+        self.batch.draw() 
+        self.win.flip()
 
     def clear(self):
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT) # Set up background
