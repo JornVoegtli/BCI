@@ -393,14 +393,14 @@ class MyPyglet():
             else:
                 word = ((self.current_text).split(" "))[-1]
                 for i in range (0,len(word)):
-                    self.widget.caret.on_text_motion(MOTION_BACKSPACE)
+                    self.widget.caret.on_text_motion(pyglet.window.key.MOTION_BACKSPACE)
                 self.current_text = self.current_text[0,len(self.current_text)-len(word)] + self.text_input
                 self.widget.caret.on_text(self.text_input)
             self.updatePredictiveText()
         # Backspace
         elif (self.text_input == u"\u2190"): 
             self.current_text = self.current_text.pop()
-            self.widget.caret.on_text_motion(MOTION_BACKSPACE)
+            self.widget.caret.on_text_motion(pyglet.window.key.MOTION_BACKSPACE)
         elif (self.text_input == u"\u2190"): 
             print("Pressed ENTER")
         elif (self.text_input == "ABC"):
