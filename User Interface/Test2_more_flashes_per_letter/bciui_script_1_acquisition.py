@@ -85,6 +85,9 @@ class MyOVBox(OVBox):
             # Flash for the next (flashDuration) loops
             elif (self.loopCounter <= targetDelay + flashDuration):
                 newStim = self.readFlash()
+                while (newStim not in range(33025, 33037) and newStim!=32779 and newStim!=32780):
+                    self.sendOutput(1, newStim)
+                    newStim = self.readFlash()
                 # Aim row/column flash
                 if (33025 <= newStim and newStim <= 33036):
                     self.flash = self.hashTable[newStim - OVTK_StimulationId_Label_00]

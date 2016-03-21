@@ -47,14 +47,14 @@ class MyPyglet():
             row = []
             for i in range(0, len(textUC[j]) ):
                 line = textUC[j][i]
-                ypos = keyboardPositionTop - (j)*(keyboardPositionTop/5) 
-                xpos = i*width/6 + width/40
-                temp = pyglet.text.Label(line, 
+                ypos = keyboardPositionTop - (j)*(keyboardPositionTop/6) - (keyboardPositionTop/6)/2
+                xpos = i*width/6 + (width/6)/2
+                temp = pyglet.text.Label(line,
                     font_name='Courier New',
                     font_size=keyboardFontSize,
                     color=(keyboardFontColour[0],keyboardFontColour[1],keyboardFontColour[2],keyboardFontColour[3]),
                     x=xpos, y=ypos,
-                    anchor_x='left', anchor_y='bottom')
+                    anchor_x='center', anchor_y='center')
                 row.append(temp)
             matrixUC.append(row)
         # Lowercase
@@ -63,14 +63,14 @@ class MyPyglet():
             row = []
             for i in range(0, len(textLC[j]) ):
                 line = textLC[j][i]
-                ypos = keyboardPositionTop - (j)*(keyboardPositionTop/5)
-                xpos = i*width/6 + width/40
+                ypos = keyboardPositionTop - (j)*(keyboardPositionTop/6) - (keyboardPositionTop/6)/2
+                xpos = i*width/6 + (width/6)/2
                 temp = pyglet.text.Label(line, 
                     font_name='Courier New',
                     font_size=keyboardFontSize,
                     color=(keyboardFontColour[0],keyboardFontColour[1],keyboardFontColour[2],keyboardFontColour[3]),
                     x=xpos, y=ypos,
-                    anchor_x='left', anchor_y='bottom')
+                    anchor_x='center', anchor_y='center')
                 row.append(temp)
             matrixLC.append(row)
         # Numbers
@@ -79,14 +79,14 @@ class MyPyglet():
             row = []
             for i in range(0, len(textNum[j]) ):
                 line = textNum[j][i]
-                ypos = keyboardPositionTop - (j)*(keyboardPositionTop/5)
-                xpos = i*width/6 + width/40
+                ypos = keyboardPositionTop - (j)*(keyboardPositionTop/6) - (keyboardPositionTop/6)/2
+                xpos = i*width/6 + (width/6)/2
                 temp = pyglet.text.Label(line, 
                     font_name='Courier New',
                     font_size=keyboardFontSize,
                     color=(keyboardFontColour[0],keyboardFontColour[1],keyboardFontColour[2],keyboardFontColour[3]),
                     x=xpos, y=ypos,
-                    anchor_x='left', anchor_y='bottom')
+                    anchor_x='center', anchor_y='center')
                 row.append(temp)
             matrixNum.append(row)
         # Make matrix lists
@@ -108,7 +108,7 @@ class MyPyglet():
             rowNum = rowStim - OVTK_StimulationId_Label_01
             colNum = colStim - OVTK_StimulationId_Label_07
             x = colNum * width / 6
-            y = (5-rowNum) * (keyboardPositionTop/5)
+            y = (5-rowNum) * (keyboardPositionTop/6)
         primitives.drawRect(x, y, targetSize[0], targetSize[1], targetColour[0],targetColour[1],targetColour[2],targetColour[3])
         return
 
@@ -128,7 +128,7 @@ class MyPyglet():
                 font_size=selectTextFontSize,
                 color=(selectTextFontColour[0],selectTextFontColour[1],selectTextFontColour[2],selectTextFontColour[3]),
                 x=width/2, y=height/2,
-                anchor_x='left', anchor_y='bottom')
+                anchor_x='center', anchor_y='center')
         selectText.draw()
         glClearColor(backgroundColour[0], backgroundColour[1], backgroundColour[2], backgroundColour[3])
         return 
@@ -283,14 +283,14 @@ class MyPyglet():
             circleColourVert = circleColourDefault
         if (rowcol < 6 and isDrawVertCircle):
             for j in range (0,6):
-                ypos  = j*(keyboardPositionTop)/5 + circleRadius/4
-                xpos  = rowcol*width/6 + circleRadius/4 
+                ypos  = j*(keyboardPositionTop)/6 + (keyboardPositionTop/6)/2
+                xpos  = rowcol*width/6 + (width/6)/2
                 primitives.drawCircle(xpos,ypos,circleRadius,circleColourVert[0],circleColourVert[1],circleColourVert[2],circleColourVert[3])
         elif(rowcol < 12 and isDrawHorizCircle):
             for j in range (0,6):
-                ypos  = rowcol%6*(keyboardPositionTop)/5 + circleRadius/4
-                xpos  = j*width/6 + circleRadius/4
-                primitives.drawCircle(xpos,ypos,circleRadius,circleColourHoriz[0],circleColourHoriz[1],circleColourHoriz[2],circleColourHoriz[3])        
+                ypos  = rowcol%6*(keyboardPositionTop)/6 + (keyboardPositionTop/6)/2
+                xpos  = j*width/6 + (width/6)/2
+                primitives.drawCircle(xpos,ypos,circleRadius,circleColourHoriz[0],circleColourHoriz[1],circleColourHoriz[2],circleColourHoriz[3])
         return
 
     def drawImage(self, rowcol):
@@ -339,32 +339,32 @@ class MyPyglet():
             word = word[0:5] # Limit the length of the word to predict so it won't slow things down
         corrected_text = word_predictor.correct(word)
 
-        ypos = keyboardPositionTop - (0)*(keyboardPositionTop/5)
-        xpos  = 0*width/6 + width/40
+        ypos = keyboardPositionTop - (0)*(keyboardPositionTop/6) - (keyboardPositionTop/6)/2
+        xpos  = 0*width/6 + (width/6)/2
         temp0 = pyglet.text.Label(corrected_text[0], 
                 font_name='Courier New',
                 font_size=keyboardFontSize,
                 color=(keyboardFontColour[0],keyboardFontColour[1],keyboardFontColour[2],keyboardFontColour[3]),
                 x=xpos, y=ypos,
-                anchor_x='left', anchor_y='bottom')
+                anchor_x='center', anchor_y='center')
        
-        ypos = keyboardPositionTop - (0)*(keyboardPositionTop/5)
-        xpos  = 1*width/6 + width/40
+        ypos = keyboardPositionTop - (0)*(keyboardPositionTop/6) - (keyboardPositionTop/6)/2
+        xpos  = 1*width/6 + (width/6)/2
         temp1 = pyglet.text.Label(corrected_text[1], 
                 font_name='Courier New',
                 font_size=keyboardFontSize,
                 color=(keyboardFontColour[0],keyboardFontColour[1],keyboardFontColour[2],keyboardFontColour[3]),
                 x=xpos, y=ypos,
-                anchor_x='left', anchor_y='bottom')
+                anchor_x='center', anchor_y='center')
         
-        ypos = keyboardPositionTop - (0)*(keyboardPositionTop/5)
-        xpos  = 2*width/6 + width/40
+        ypos = keyboardPositionTop - (0)*(keyboardPositionTop/6) - (keyboardPositionTop/6)/2
+        xpos  = 2*width/6 + (width/6)/2
         temp2 = pyglet.text.Label(corrected_text[2], 
                 font_name='Courier New',
                 font_size=keyboardFontSize,
                 color=(keyboardFontColour[0],keyboardFontColour[1],keyboardFontColour[2],keyboardFontColour[3]),
                 x=xpos, y=ypos,
-                anchor_x='left', anchor_y='bottom')
+                anchor_x='center', anchor_y='center')
 
         for i in range(len(self.matrices)): # Need to update for all matrices
             self.matrices[i][0][0] = temp0

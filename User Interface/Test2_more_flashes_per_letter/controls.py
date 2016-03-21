@@ -12,13 +12,13 @@ UISize = 10
 #UIscaling based on UISize
 widgetPositionY = UISize*height/12
 widgetHeight = height-widgetPositionY
-keyboardPositionTop = widgetPositionY - height/12
+keyboardPositionTop = widgetPositionY 
 #FLASHING MODES
 isDrawCircleMode = True
-isHighlightTextMode = True
-isDrawTriMode = True
-isDrawImageMode = True
-isEnlargeTextMode = True
+isHighlightTextMode = False
+isDrawTriMode = False
+isDrawImageMode = False
+isEnlargeTextMode = False
 #CRAZY FLASHING MODES
 isDrawCrazyFlashMode = True
 isCrazyDrawCircleMode = True
