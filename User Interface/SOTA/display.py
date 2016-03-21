@@ -11,11 +11,17 @@ text = textUC # Defined in controls.py
 class MyPyglet():
     def __init__(self):
         self.imageLoad = [pyglet.image.load('img/Vinay.jpg'), 
-            pyglet.image.load('img/Sam.jpg'), 
-            pyglet.image.load('img/Jorn.jpg'), 
-            pyglet.image.load('img/Jun.jpg'), 
-            pyglet.image.load('img/Nico.jpg'), 
-            pyglet.image.load('img/javi.jpg')]
+                        pyglet.image.load('img/Sam.jpg'), 
+                        pyglet.image.load('img/Jorn.jpg'), 
+                        pyglet.image.load('img/Jun.jpg'), 
+                        pyglet.image.load('img/Nico.jpg'), 
+                        pyglet.image.load('img/javi.jpg'),
+                        pyglet.image.load('img/cat.jpg'),
+                        pyglet.image.load('img/cat2.jpg'),
+                        pyglet.image.load('img/cat3.jpg'),
+                        pyglet.image.load('img/cat4.jpg'),
+                        pyglet.image.load('img/cat5.jpg'),
+                        pyglet.image.load('img/cat6.jpg')]
         # Pyglet
         #create window
         self.win = window.Window(fullscreen = True)
@@ -50,11 +56,6 @@ class MyPyglet():
         #set up window rendering
         self.win.dispatch_events()
         self.win.flip()
-
-        # More flash settings
-        if isCrazyKeyboardEnlargeColour:
-            self.generateRandomColour()
-            keyboardEnlargeFontColour = self.colourCrazy
         return
 
     def drawTarget(self, rowStim, colStim):
@@ -70,7 +71,6 @@ class MyPyglet():
         hue = randint(0,360)
         while hue > 120 and hue <290:
             hue = randint(0,360)
-
         chroma = 1 - abs(2*lightness-1)*saturation
         huePrime = hue/60
         intermediateValue = chroma*(1-abs(huePrime%2-1))
@@ -110,49 +110,88 @@ class MyPyglet():
         return 
 
     def startFlash(self, rowcol):
-        # If column
-        if (rowcol <= 5 and isDrawVertFlash):
-            if (isEnlargeTextMode):
-                c = rowcol
-                for r in range(0, len(self.matrix)):
-                    self.matrix[r][c].font_size = keyboardEnlargeFontSize
-                    self.matrix[r][c].color = (keyboardEnlargeFontColour[0],keyboardEnlargeFontColour[1],keyboardEnlargeFontColour[2],keyboardEnlargeFontColour[3])
-                    self.matrix[r][c].bold = True
-            if (isHighlightTextMode):
-                if(isCrazyHighlightTextMode):
-                    self.generateRandomColour()
-                    vertFlashColour = self.colourCrazyNormalized
-                    self.generateRandomColour()
-                    horizFlashColour = self.colourCrazyNormalized
-                else:
-                    vertFlashColour = vertFlashColourDefault
-                    horizFlashColour = horizFlashColourDefault
+        if(isDrawCrazyFlashMode):
+            randNum = randint(1,4)
+            #if randNum == 0:
+            #   self.drawHighlightText(rowcol)
+            if randNum == 1:
+                self.drawEnlargeText(rowcol)
+            elif randNum == 2:
+                self.drawCircleFlash(rowcol)
+            elif randNum == 3:
+                self.drawTriFlash(rowcol)
+            elif randNum == 4:
+                self.drawImage(rowcol)
+        else:
+            if(isEnlargeTextMode):
+                self.drawEnlargeText(rowcol)
+            if(isHighlightTextMode):
+                self.drawHighlightText(rowcol)
+            if(isDrawCircleMode):
+                self.drawCircleFlash(rowcol)
+            if(isDrawImageMode):
+                self.drawImage(rowcol)
+            if(isDrawTriMode):
+                self.drawTriFlash(rowcol)
+        return
+    def drawHighlightText(self,rowcol):
+        if(isCrazyHighlightTextMode):
+            self.generateRandomColour()
+            vertFlashColour = self.colourCrazyNormalized
+            self.generateRandomColour()
+            horizFlashColour = self.colourCrazyNormalized
+        else:
+            vertFlashColour = vertFlashColourDefault
+            horizFlashColour = horizFlashColourDefault
+        if (isHighlightTextMode):
+            if (rowcol <= 5 and isDrawVertFlash):
                 primitives.drawRect(rowcol*width/6, 0, vertFlashSize[0], vertFlashSize[1], vertFlashColour[0],vertFlashColour[1],vertFlashColour[2],vertFlashColour[3])
-        # If row
-        elif (rowcol <= 11 and isDrawHorizFlash):
-            if (isEnlargeTextMode):
-                r = rowcol%6
-                for c in range(0, len(self.matrix[r])):
-                    self.matrix[r][c].font_size = keyboardEnlargeFontSize
-                    self.matrix[r][c].color = (keyboardEnlargeFontColour[0],keyboardEnlargeFontColour[1],keyboardEnlargeFontColour[2],keyboardEnlargeFontColour[3])
-                    self.matrix[r][c].bold = True
-            if (isHighlightTextMode):
-                if(isCrazyHighlightTextMode):
-                    self.generateRandomColour()
-                    vertFlashColour = self.colourCrazyNormalized
-                    self.generateRandomColour()
-                    horizFlashColour = self.colourCrazyNormalized
-                else:
-                    vertFlashColour = vertFlashColourDefault
-                    horizFlashColour = horizFlashColourDefault
-                primitives.drawRect(0, rowcol%6*height/12, horizFlashSize[0], horizFlashSize[1], horizFlashColour[0], horizFlashColour[1], horizFlashColour[2], horizFlashColour[3])
-        if(isDrawCircleMode):
-            self.drawCircle(rowcol)
-        if(isDrawImageMode):
-            self.drawImage(rowcol)
+            elif (rowcol <= 11 and isDrawHorizFlash):
+                if (isHighlightTextMode):
+                    primitives.drawRect(0, rowcol%6*keyboardPositionTop/5, horizFlashSize[0], horizFlashSize[1], horizFlashColour[0], horizFlashColour[1], horizFlashColour[2], horizFlashColour[3])
+        return
+    def drawEnlargeText(self,rowcol):  
+        if isCrazyKeyboardEnlargeColour:
+            self.generateRandomColour()
+            keyboardEnlargeFontColour = self.colourCrazy
+        else:
+            keyboardEnlargeFontColour = keyboardEnlargeFontColourDefault 
+        if (rowcol <= 5 and isDrawVertEnlarge): 
+            c = rowcol
+            for r in range(0, len(self.matrix)):
+                self.matrix[r][c].font_size = keyboardEnlargeFontSize
+                self.matrix[r][c].color = (keyboardEnlargeFontColour[0],keyboardEnlargeFontColour[1],keyboardEnlargeFontColour[2],keyboardEnlargeFontColour[3])
+                self.matrix[r][c].bold = True
+        elif (rowcol <= 11 and isDrawHorizEnlarge): 
+            r = 5-rowcol%6
+            for c in range(0, len(self.matrix[r])):
+                self.matrix[r][c].font_size = keyboardEnlargeFontSize
+                self.matrix[r][c].color = (keyboardEnlargeFontColour[0],keyboardEnlargeFontColour[1],keyboardEnlargeFontColour[2],keyboardEnlargeFontColour[3])
+                self.matrix[r][c].bold = True
         return
 
-    def drawCircle(self, rowcol):
+    def drawTriFlash(self,rowcol):
+        if(isCrazyDrawTriMode):
+            self.generateRandomColour()
+            triColourVert = self.colourCrazyNormalized
+            self.generateRandomColour()
+            triColourHoriz = self.colourCrazyNormalized
+        else:
+            triColourHoriz = triColourDefault
+            triColourVert = triColourDefault
+        if (rowcol < 6 and isDrawVertTri):
+            for j in range (0,6):
+                ypos  = j*(keyboardPositionTop)/5
+                xpos  = rowcol*width/6 
+                primitives.drawTri(xpos,ypos,triWidth,triHeight,triColourVert[0],triColourVert[1],triColourVert[2],triColourVert[3])
+        elif(rowcol < 12 and isDrawHorizTri):
+            for j in range (0,6):
+                ypos  = rowcol%6*(keyboardPositionTop)/5
+                xpos  = j*width/6
+                primitives.drawTri(xpos,ypos,triWidth,triHeight,triColourHoriz[0],triColourHoriz[1],triColourHoriz[2],triColourHoriz[3])                
+        return
+
+    def drawCircleFlash(self, rowcol):
         if(isCrazyDrawCircleMode):
             self.generateRandomColour()
             circleColourVert = self.colourCrazyNormalized
@@ -174,33 +213,32 @@ class MyPyglet():
         return
 
     def drawImage(self, rowcol):
-        if(isDrawImageMode):
-            if(rowcol<6 and isDrawVertImage):
-                for j in range(0,6):
-                    ypos  = j*(keyboardPositionTop)/5
-                    xpos  = rowcol*width/6
-                    self.imageLoad[randint(0,5)].blit(xpos,ypos,width=imageWidth,height=imageHeight)
-            elif(rowcol < 12 and isDrawHorizCircle):
-                for j in range (0,6):
-                    ypos  = rowcol%6*(keyboardPositionTop)/5
-                    xpos  = j*width/6
-                    self.imageLoad[randint(0,5)].blit(xpos,ypos,width=imageWidth,height=imageHeight)
+        if(rowcol<6 and isDrawVertImage):
+            for j in range(0,6):
+                ypos  = j*(keyboardPositionTop)/5
+                xpos  = rowcol*width/6
+                self.imageLoad[randint(0,len(self.imageLoad)-1)].blit(xpos,ypos,width=imageWidth,height=imageHeight)
+        elif(rowcol < 12 and isDrawHorizImage):
+            for j in range (0,6):
+                ypos  = rowcol%6*(keyboardPositionTop)/5
+                xpos  = j*width/6
+                self.imageLoad[randint(0,len(self.imageLoad)-1)].blit(xpos,ypos,width=imageWidth,height=imageHeight)
         return
 
     def stopFlash(self, rowcol):
-        if (isEnlargeTextMode == False): 
+        if (isEnlargeTextMode == False and isDrawCrazyFlashMode == False): 
             return # No need to stopFlash if text is not enlarged
 
         # If column
-        if (rowcol <= 5 and isDrawVertFlash):
+        if (rowcol <= 5 and isDrawVertEnlarge):
             c = rowcol
             for r in range(0, len(self.matrix)):
                 self.matrix[r][c].font_size = keyboardFontSize
                 self.matrix[r][c].color = (keyboardFontColour[0],keyboardFontColour[1],keyboardFontColour[2],keyboardFontColour[3])
                 self.matrix[r][c].bold = False
         # If row
-        elif (rowcol <= 11 and isDrawHorizFlash):
-            r = rowcol%6
+        elif (rowcol <= 11 and isDrawHorizEnlarge):
+            r = 5-rowcol%6
             for c in range(0, len(self.matrix[r])):
                 self.matrix[r][c].font_size = keyboardFontSize
                 self.matrix[r][c].color = (keyboardFontColour[0],keyboardFontColour[1],keyboardFontColour[2],keyboardFontColour[3])

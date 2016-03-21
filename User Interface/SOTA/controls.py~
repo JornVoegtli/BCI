@@ -7,6 +7,15 @@ width = user32.GetSystemMetrics(0)
 height = user32.GetSystemMetrics(1)
 
 ############################# CONTROLS #############################
+<<<<<<< HEAD
+#P300 flash modes
+isEnlargeTextMode = True
+isHighlightTextMode = True
+isDrawCircleMode = True
+isCrazyKeyboardEnlargeColour = False
+isCrazyHighlightTextMode = False
+isCrazyDrawCircleMode = True
+=======
 #UIsize
 UISize = 10
 #UIscaling based on UISize
@@ -17,6 +26,7 @@ keyboardPositionTop = widgetPositionY - height/12
 isDrawCircleMode = True
 isHighlightTextMode = False
 isDrawTriMode = True
+>>>>>>> 7ff84fb0c1ffb3564410d190f76d67f8f6116512
 isDrawImageMode = True
 isEnlargeTextMode = False
 #CRAZY FLASHING MODES
@@ -30,6 +40,12 @@ isDrawVertCircle = True
 isDrawHorizCircle = True
 circleRadius = 100
 circleColourDefault = [1,0,1,1]
+<<<<<<< HEAD
+#condition to draw flash
+isDrawVertFlash = False
+isDrawHorizFlash = False
+#condition to draw target
+=======
 #HIGHLIGHT MODE
 isDrawVertFlash = True
 isDrawHorizFlash = True
@@ -54,6 +70,7 @@ isDrawHorizImage = True
 imageWidth = 100
 imageHeight = 100
 #TARGET
+>>>>>>> 7ff84fb0c1ffb3564410d190f76d67f8f6116512
 isDrawTarget = True
 targetSize = [width/6,height/12]
 targetFontColour = [255,0,255,255]
@@ -63,9 +80,12 @@ backgroundColour = [0,0,1,1] #1 corresponds to 255 last value is alpha
 #text parameters
 keyboardFontSize = 36
 keyboardFontColour = [230,230,230,255]
+<<<<<<< HEAD
 keyboardEnlargeFontSize = 50
 keyboardEnlargeFontColourDefault = (255,0,255,255) #default
 keyboardEnlargeFontColour = keyboardEnlargeFontColourDefault
+=======
+>>>>>>> 7ff84fb0c1ffb3564410d190f76d67f8f6116512
 #timing
 targetDelay = 30
 flashDuration = 200

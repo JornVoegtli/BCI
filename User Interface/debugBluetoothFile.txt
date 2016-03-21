@@ -1,0 +1,2 @@
+2016-03-18T14:49:25:683 [BTA] Winsock lib loaded!
+2016-03-18T16:10:46:159 [BTA] closeBTSockets is OK
